@@ -1,0 +1,188 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>File Converter Java</title><meta name="generator" content="MATLAB 8.3"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2016-02-09"><meta name="DC.source" content="xlsx2csv.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1>File Converter Java</h1><!--introduction--><p>This script calls a Java function to convert xlsx file to csv file The Java fucntion is based on Apache POI API <a href="http://poi.apache.org/">http://poi.apache.org/</a>. The version used is stable version of poi 3.10.1. In order to make it working, the following jar need to be added to dynamic java path:</p><pre class="language-matlab">* javaaddpath(<span class="string">'.\poi-3.10.1-20140818.jar'</span>);
+* javaaddpath(<span class="string">'.\poi-examples-3.10.1-20140818.jar'</span>);
+* javaaddpath(<span class="string">'.\poi-excelant-3.10.1-20140818.jar'</span>);
+* javaaddpath(<span class="string">'.\poi-ooxml-3.10.1-20140818.jar'</span>);
+* javaaddpath(<span class="string">'.\poi-ooxml-schemas-3.10.1-20140818.jar'</span>);
+* javaaddpath(<span class="string">'.\poi-scratchpad-3.10.1-20140818.jar'</span>);
+* javaaddpath(<span class="string">'.\commons-codec-1.5.jar'</span>);
+* javaaddpath(<span class="string">'.\commons-logging-1.1.jar'</span>);
+* javaaddpath(<span class="string">'.\junit-4.11.jar'</span>);
+* javaaddpath(<span class="string">'.\log4j-1.2.13.jar'</span>);
+* javaaddpath(<span class="string">'.\dom4j-1.6.1.jar'</span>);
+* javaaddpath(<span class="string">'.\stax-api-1.0.1.jar'</span>);
+* javaaddpath(<span class="string">'.\xmlbeans-2.6.0.jar'</span>);
+</pre><p>
+The native function is written in java, and exported as a JAR to used in
+matlab. In order to use it,
+<font color="red"><b>Convert2CSV.jar</b></font>
+has to be added as a java dynamic path: javaaddpath('.\Convert2CSV.jar')
+</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">I/O</a></li><li><a href="#2">Code</a></li><li><a href="#4">Navigation</a></li><li><a href="#5">Author</a></li></ul></div><h2>I/O<a name="1"></a></h2><div><ul><li>INPUT:</li></ul></div><p>
+<table border=2>
+<tr><td><b>inputfile</b></td><td>is a xlsx file with path</td></tr>
+<tr><td><b>outputfile</b></td><td>is a csv file with path</td></tr>
+<tr><td><b>column_list</b></td><td>is an array that contains column numbers that need to be converted, if it is an empty array, each column will be converted.</td></tr>
+<tr><td><b>format_list</b></td><td>is an array that contains the corresponding format of the column numbers that need to be converted.</td></tr>
+</table>
+</p><div><ul><li>OUTPUT</li></ul></div><p>
+<table border=2>
+<tr><td><b>Output</b></td><td>a csv file</td></tr>
+</table>
+</p><h2>Code<a name="2"></a></h2><pre class="codeinput"><span class="keyword">function</span> xlsx2csv(inputfile, outputfile, column_list, format_list, date)
+</pre><pre class="codeinput">import <span class="string">java.io.File</span>
+import <span class="string">uos.xlsxconverter.csv.xlsx2csv</span>
+
+xlsxFile = java.io.File(inputfile);
+<span class="comment">%minColumns = -1;</span>
+fout = java.io.FileOutputStream(outputfile);
+fCSV = java.io.PrintStream(fout);
+p = org.apache.poi.openxml4j.opc.OPCPackage.open(xlsxFile.getPath(),org.apache.poi.openxml4j.opc.PackageAccess.READ);
+minColumns = -1;
+converter = uos.xlsxconverter.csv.xlsx2csv(p,fCSV,minColumns);
+converter.process(column_list, format_list, date);
+fCSV.close();
+fout.close();
+</pre><h2>Navigation<a name="4"></a></h2><div><ul><li>Go to <a href="..\html\main.html">main</a></li><li>Go to <a href="http://www.surrey.ac.uk/cs/research/msf/projects/polarbear_pattern_of_life_anpr_behaviour_extraction_analysis_and_recognition.htm">Project page</a></li></ul></div><h2>Author<a name="5"></a></h2><pre>Haiyue Yuan, 02.2016, Depatment of Computer Science, University of Surrey</pre><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2014a</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% File Converter Java
+% This script calls a Java function to convert xlsx file to csv file
+% The Java fucntion is based on Apache POI API http://poi.apache.org/. The
+% version used is stable version of poi 3.10.1. In order to make it
+% working, the following jar need to be added to dynamic java path:
+%
+%   * javaaddpath('.\poi-3.10.1-20140818.jar');
+%   * javaaddpath('.\poi-examples-3.10.1-20140818.jar');
+%   * javaaddpath('.\poi-excelant-3.10.1-20140818.jar');
+%   * javaaddpath('.\poi-ooxml-3.10.1-20140818.jar');
+%   * javaaddpath('.\poi-ooxml-schemas-3.10.1-20140818.jar');
+%   * javaaddpath('.\poi-scratchpad-3.10.1-20140818.jar');
+%   * javaaddpath('.\commons-codec-1.5.jar');
+%   * javaaddpath('.\commons-logging-1.1.jar');
+%   * javaaddpath('.\junit-4.11.jar');
+%   * javaaddpath('.\log4j-1.2.13.jar');
+%   * javaaddpath('.\dom4j-1.6.1.jar');
+%   * javaaddpath('.\stax-api-1.0.1.jar');
+%   * javaaddpath('.\xmlbeans-2.6.0.jar');
+%
+% <html>
+% The native function is written in java, and exported as a JAR to used in
+% matlab. In order to use it, 
+% <font color="red"><b>Convert2CSV.jar</b></font>
+% has to be added as a java dynamic path: javaaddpath('.\Convert2CSV.jar')
+% </html>
+%
+%% I/O
+% * INPUT:
+%
+% <html>
+% <table border=2>
+% <tr><td><b>inputfile</b></td><td>is a xlsx file with path</td></tr>
+% <tr><td><b>outputfile</b></td><td>is a csv file with path</td></tr>
+% <tr><td><b>column_list</b></td><td>is an array that contains column numbers that need to be converted, if it is an empty array, each column will be converted.</td></tr>
+% <tr><td><b>format_list</b></td><td>is an array that contains the corresponding format of the column numbers that need to be converted.</td></tr>
+% </table>
+% </html>
+%
+% * OUTPUT
+% 
+% <html>
+% <table border=2>
+% <tr><td><b>Output</b></td><td>a csv file</td></tr>
+% </table>
+% </html>
+%
+%% Code
+function xlsx2csv(inputfile, outputfile, column_list, format_list, date)
+
+import java.io.File
+import uos.xlsxconverter.csv.xlsx2csv
+
+xlsxFile = java.io.File(inputfile);
+%minColumns = -1;
+fout = java.io.FileOutputStream(outputfile);
+fCSV = java.io.PrintStream(fout);
+p = org.apache.poi.openxml4j.opc.OPCPackage.open(xlsxFile.getPath(),org.apache.poi.openxml4j.opc.PackageAccess.READ);
+minColumns = -1;
+converter = uos.xlsxconverter.csv.xlsx2csv(p,fCSV,minColumns);
+converter.process(column_list, format_list, date);
+fCSV.close();
+fout.close();
+%% Navigation
+% * Go to 
+% <..\html\main.html main> 
+% * Go to 
+% <http://www.surrey.ac.uk/cs/research/msf/projects/polarbear_pattern_of_life_anpr_behaviour_extraction_analysis_and_recognition.htm Project page> 
+
+%% Author
+%  Haiyue Yuan, 02.2016, Depatment of Computer Science, University of Surrey
+
+
+##### SOURCE END #####
+--></body></html>

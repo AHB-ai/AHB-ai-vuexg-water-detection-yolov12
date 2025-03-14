@@ -1,0 +1,13 @@
+Each source code contains self-explanatory comments. 
+Please refer to main.m for example usage.
+
+Usage example:
+-getTravelTimes scans all ANPR reads (intermediate format), run this only once to get data of travel times between cameras.
+-trafficAnalysis_novrm is to get travel time between indicated cameras given two dates, and two times.
+-trafficAnalysis_vrm is to get travel time between indicated cameras given two dates, two times, and a vrm.
+
+Please NOTE: for 90 days data from Feb 2015 to May 2015, all the travel time between cameras have been generated, and stored in '..\traffic time estimation from ANPR reads\traffic_output'.
+
+
+
+

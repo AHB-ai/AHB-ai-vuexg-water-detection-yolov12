@@ -1,0 +1,180 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Session Detection</title><meta name="generator" content="MATLAB 8.3"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2016-02-03"><meta name="DC.source" content="singleSession.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1>Session Detection</h1><!--introduction--><pre>This function is to detect session for all vehicles</pre><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">I/O</a></li><li><a href="#2">Code</a></li><li><a href="#8">Linked Functions</a></li><li><a href="#9">Navigation</a></li><li><a href="#10">Author</a></li></ul></div><h2>I/O<a name="1"></a></h2><div><ul><li>INPUT:</li></ul></div><p>
+<table border=2>
+<tr><td><b>journeyMap</b></td><td>this contains journey information for each vehicle.</td></tr>
+<tr><td><b>session_break</b></td><td>this is the threshold of session break in unit of hours.</td></tr>
+<tr><td><b>num_in_session</b></td><td>this is the threshold of convoy size.</td></tr>
+</table>
+</p><div><ul><li>OUTPUT:</li></ul></div><p>
+<table border=2>
+<tr><td><b>single_sessionMap</b></td><td>updated journey data including session information . </td></tr>
+</table>
+</p><h2>Code<a name="2"></a></h2><pre class="codeinput"><span class="keyword">function</span> [single_sessionMap] = singleSession(journeyMap, session_break, num_in_session)
+</pre><p>Get a list of vrms and transfer session break threshold to seconds</p><pre class="codeinput">keySet = keys(journeyMap);
+tS = session_break*3600;
+
+single_sessionMap = containers.Map(<span class="string">'KeyType'</span>,<span class="string">'char'</span>,<span class="string">'ValueType'</span>,<span class="string">'any'</span>);
+<span class="keyword">for</span> m = 1:length(keySet)
+</pre><p>Define session for each vehicle using define_session See <a href="..\html\define_session.html">Defining Session</a></p><pre class="codeinput">    carID = keySet{m};
+    [session] = define_session(carID,tS,journeyMap);
+</pre><p>Refine session using convoy session size threshold</p><pre class="codeinput">    <span class="keyword">if</span> ~isempty(session)
+        session_tmp = cell(size(session));
+        session_c = 1;
+        <span class="keyword">for</span> i = 1:length(session)
+            <span class="keyword">if</span> length(session{i})&gt;num_in_session
+                session_tmp{session_c} = session{i};
+                session_c = session_c+1;
+            <span class="keyword">end</span>;
+        <span class="keyword">end</span>;
+        <span class="keyword">if</span> ~isempty(session_tmp{1})
+            single_sessionMap(carID) = session_tmp;
+        <span class="keyword">end</span>;
+        clear <span class="string">session_c</span>;
+        clear <span class="string">session_tmp</span>;
+    <span class="keyword">end</span>;
+</pre><pre class="codeinput"><span class="keyword">end</span>;
+</pre><pre class="codeinput"><span class="keyword">end</span>
+</pre><h2>Linked Functions<a name="8"></a></h2><div><ul><li>See <a href="..\html\define_session.html">Defining Session</a></li></ul></div><h2>Navigation<a name="9"></a></h2><div><ul><li>Back to <a href="..\html\main.html">Convoy Analysis Tool</a></li><li>Go to <a href="http://www.surrey.ac.uk/cs/research/msf/projects/polarbear_pattern_of_life_anpr_behaviour_extraction_analysis_and_recognition.htm">Project page</a></li></ul></div><h2>Author<a name="10"></a></h2><pre>Haiyue Yuan, 01.2016, Depatment of Computer Science, University of Surrey</pre><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2014a</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% Session Detection
+%  This function is to detect session for all vehicles 
+%%
+%% I/O
+% * INPUT:
+%
+% <html>
+% <table border=2>
+% <tr><td><b>journeyMap</b></td><td>this contains journey information for each vehicle.</td></tr>
+% <tr><td><b>session_break</b></td><td>this is the threshold of session break in unit of hours.</td></tr>
+% <tr><td><b>num_in_session</b></td><td>this is the threshold of convoy size.</td></tr>
+% </table>
+% </html>
+%
+% * OUTPUT:
+%
+% <html>
+% <table border=2>
+% <tr><td><b>single_sessionMap</b></td><td>updated journey data including session information . </td></tr>
+% </table>
+% </html>
+%
+%% Code
+function [single_sessionMap] = singleSession(journeyMap, session_break, num_in_session)
+%%
+% Get a list of vrms and transfer session break threshold to seconds
+keySet = keys(journeyMap);
+tS = session_break*3600; 
+
+single_sessionMap = containers.Map('KeyType','char','ValueType','any');
+for m = 1:length(keySet)  
+    %%
+    % Define session for each vehicle using define_session
+    % See
+    % <..\html\define_session.html Defining Session>
+    carID = keySet{m};
+    [session] = define_session(carID,tS,journeyMap);
+    %%
+    % Refine session using convoy session size threshold
+    if ~isempty(session)
+        session_tmp = cell(size(session));
+        session_c = 1;
+        for i = 1:length(session)
+            if length(session{i})>num_in_session
+                session_tmp{session_c} = session{i};
+                session_c = session_c+1;
+            end;
+        end;
+        if ~isempty(session_tmp{1})
+            single_sessionMap(carID) = session_tmp;
+        end;
+        clear session_c;
+        clear session_tmp;
+    end;
+
+end;
+
+end
+%% Linked Functions
+% * See
+% <..\html\define_session.html Defining Session>
+
+%% Navigation
+% * Back to 
+% <..\html\main.html Convoy Analysis Tool>
+% * Go to
+% <http://www.surrey.ac.uk/cs/research/msf/projects/polarbear_pattern_of_life_anpr_behaviour_extraction_analysis_and_recognition.htm Project page> 
+
+
+%% Author
+%  Haiyue Yuan, 01.2016, Depatment of Computer Science, University of Surrey
+%%
+
+##### SOURCE END #####
+--></body></html>

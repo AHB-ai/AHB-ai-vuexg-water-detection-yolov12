@@ -1,0 +1,320 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Organise Data by Camera Group</title><meta name="generator" content="MATLAB 8.3"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2016-02-09"><meta name="DC.source" content="organiseDataByCam.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1>Organise Data by Camera Group</h1><!--introduction--><p>This script is to organise the data and distribute the data according to its camera groups, it formulates a physical layer of data index based on camera groups</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Code</a></li><li><a href="#3">Navigation</a></li><li><a href="#4">Author</a></li></ul></div><h2>Code<a name="1"></a></h2><pre class="codeinput"><span class="keyword">function</span> organiseDataByCam(input_data, date, output_folder)
+</pre><pre class="codeinput">    data = input_data;
+
+    <span class="comment">% Cut the data into small pieces to speed up the whole proces</span>
+    number = floor(length(data)/10000);
+    mod_number = mod(length(data), 10000);
+    mapArray = cell(number+1,1);
+    <span class="comment">% Load the whole data, and create corresponding directory according</span>
+    <span class="comment">% to the camera group</span>
+
+    <span class="keyword">for</span> idx = 1:number
+        camMap = containers.Map(<span class="string">'KeyType'</span>,<span class="string">'char'</span>,<span class="string">'ValueType'</span>,<span class="string">'any'</span>);
+        <span class="keyword">for</span> j = ((idx-1)*(10000)+1):idx*10000
+            tmpName = data{j,4};
+            tmp = strfind(tmpName,<span class="string">'.'</span>);
+            <span class="keyword">if</span> isempty(tmp)
+                camName = <span class="string">'Mobile Unit'</span>;<span class="comment">%['Mobile Unit\' tmpName(1:(tmp1(1)-1))];</span>
+            <span class="keyword">end</span>
+            <span class="keyword">if</span> ~isempty(tmp)
+                <span class="keyword">if</span> strcmp(tmpName(1:4), <span class="string">'ANPR'</span>)
+                    <span class="keyword">if</span> tmp(1)==6
+                        camName = [<span class="string">'ANPR0'</span> tmpName(tmp(1)-1)];
+                    <span class="keyword">end</span>
+                    <span class="keyword">if</span> tmp(1)&gt;6
+                        camName = tmpName(1:(tmp(1)-1));
+                    <span class="keyword">end</span>
+                <span class="keyword">end</span>
+            <span class="keyword">end</span>
+            num = isKey(camMap, camName);
+            <span class="keyword">if</span> num == 0
+                data_by_cam = cell(1,9);
+                data_by_cam(1,:) =  data(j,:);
+                dir = [output_folder <span class="string">'\'</span> camName];
+                <span class="keyword">if</span> ~exist(dir, <span class="string">'file'</span>)
+                    mkdir(output_folder,camName);
+                <span class="keyword">end</span>
+                camMap(camName) = data_by_cam;
+            <span class="keyword">end</span>
+            <span class="keyword">if</span> num == 1
+                data_by_cam = camMap(camName);
+                size_data = size(data_by_cam);
+                row = size_data(1);
+                data_by_cam(row+1,:) =  data(j,:);
+                camMap(camName) = data_by_cam;
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+        mapArray{idx} = camMap;
+        clear <span class="string">camMap</span>;
+    <span class="keyword">end</span>
+    camMap = containers.Map(<span class="string">'KeyType'</span>,<span class="string">'char'</span>,<span class="string">'ValueType'</span>,<span class="string">'any'</span>);
+    <span class="keyword">for</span> j = ((number)*(10000)+1):((number)*(10000)+mod_number)
+        tmpName = data{j,4};
+        tmp = strfind(tmpName,<span class="string">'.'</span>);
+        <span class="keyword">if</span> isempty(tmp)
+            camName = <span class="string">'Mobile Unit'</span>;
+        <span class="keyword">end</span>
+        <span class="keyword">if</span> ~isempty(tmp)
+            <span class="keyword">if</span> strcmp(tmpName(1:4), <span class="string">'ANPR'</span>)
+                <span class="keyword">if</span> tmp(1)==6
+                    camName = [<span class="string">'ANPR0'</span> tmpName(tmp(1)-1)];
+                <span class="keyword">end</span>
+                <span class="keyword">if</span> tmp(1)&gt;6
+                    camName = tmpName(1:(tmp(1)-1));
+                <span class="keyword">end</span>
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+
+        num = isKey(camMap, camName);
+        <span class="keyword">if</span> num == 0
+            data_by_cam = cell(1,9);
+            data_by_cam(1,:) =  data(j,:);
+            dir = [output_folder <span class="string">'\'</span> camName];
+            <span class="keyword">if</span> ~exist(dir, <span class="string">'file'</span>)
+                mkdir(output_folder,camName);
+            <span class="keyword">end</span>
+            camMap(camName) = data_by_cam;
+        <span class="keyword">end</span>
+        <span class="keyword">if</span> num == 1
+            data_by_cam = camMap(camName);
+            size_data = size(data_by_cam);
+            row = size_data(1);
+            data_by_cam(row+1,:) =  data(j,:);
+            camMap(camName) = data_by_cam;
+        <span class="keyword">end</span>
+        <span class="comment">%end</span>
+    <span class="keyword">end</span>
+    mapArray{number+1} = camMap;
+    clear <span class="string">camMap</span>;
+
+    <span class="comment">% File i/o to write into file as csv format.</span>
+    mapsize = size(mapArray);
+    row = mapsize(1);
+    <span class="keyword">for</span> id=1:row
+        tmpMap = mapArray{id};
+        <span class="keyword">if</span> ~isempty(tmpMap)
+            keySet = keys(tmpMap);
+            <span class="keyword">for</span> jd=1:length(keySet)
+                camName = keySet{jd};
+                dir = [output_folder <span class="string">'\'</span> camName];
+                file = [dir <span class="string">'\'</span> str2date(date) <span class="string">'.csv'</span>];
+                <span class="keyword">if</span> exist(file, <span class="string">'file'</span>)
+                    fid = fopen(file, <span class="string">'a+'</span>);
+                <span class="keyword">end</span>
+                <span class="keyword">if</span> ~exist(file, <span class="string">'file'</span>)
+                    fid = fopen(file, <span class="string">'wt'</span>);
+                <span class="keyword">end</span>
+                data_by_cam = tmpMap(camName);
+                datasize = size(data_by_cam);
+                datarow = datasize(1);
+                <span class="keyword">for</span> md=1:datarow
+                    fprintf(fid, <span class="string">'%s,%s,%s,%s,%s,%s,%s,%s,%s \n'</span>,data_by_cam{md,:});
+                <span class="keyword">end</span>
+                fclose(fid);
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+</pre><h2>Navigation<a name="3"></a></h2><div><ul><li>Go to <a href="..\html\main.html">main</a></li><li>Go to <a href="http://www.surrey.ac.uk/cs/research/msf/projects/polarbear_pattern_of_life_anpr_behaviour_extraction_analysis_and_recognition.htm">Project page</a></li></ul></div><h2>Author<a name="4"></a></h2><pre>Haiyue Yuan, 02.2016, Depatment of Computer Science, University of Surrey</pre><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2014a</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% Organise Data by Camera Group
+% This script is to organise the data and distribute the data according
+% to its camera groups, it formulates a physical layer of data index based
+% on camera groups
+% 
+%% Code
+function organiseDataByCam(input_data, date, output_folder)
+
+    data = input_data;
+
+    % Cut the data into small pieces to speed up the whole proces
+    number = floor(length(data)/10000);
+    mod_number = mod(length(data), 10000);
+    mapArray = cell(number+1,1);
+    % Load the whole data, and create corresponding directory according
+    % to the camera group
+
+    for idx = 1:number
+        camMap = containers.Map('KeyType','char','ValueType','any');
+        for j = ((idx-1)*(10000)+1):idx*10000
+            tmpName = data{j,4};
+            tmp = strfind(tmpName,'.');
+            if isempty(tmp)
+                camName = 'Mobile Unit';%['Mobile Unit\' tmpName(1:(tmp1(1)-1))];
+            end
+            if ~isempty(tmp)
+                if strcmp(tmpName(1:4), 'ANPR')
+                    if tmp(1)==6
+                        camName = ['ANPR0' tmpName(tmp(1)-1)];
+                    end
+                    if tmp(1)>6
+                        camName = tmpName(1:(tmp(1)-1));
+                    end
+                end
+            end
+            num = isKey(camMap, camName);
+            if num == 0
+                data_by_cam = cell(1,9);
+                data_by_cam(1,:) =  data(j,:);
+                dir = [output_folder '\' camName];
+                if ~exist(dir, 'file')
+                    mkdir(output_folder,camName);
+                end
+                camMap(camName) = data_by_cam;
+            end
+            if num == 1
+                data_by_cam = camMap(camName);
+                size_data = size(data_by_cam);
+                row = size_data(1);
+                data_by_cam(row+1,:) =  data(j,:);
+                camMap(camName) = data_by_cam;
+            end
+        end
+        mapArray{idx} = camMap;
+        clear camMap;
+    end
+    camMap = containers.Map('KeyType','char','ValueType','any');
+    for j = ((number)*(10000)+1):((number)*(10000)+mod_number)
+        tmpName = data{j,4};
+        tmp = strfind(tmpName,'.');
+        if isempty(tmp)
+            camName = 'Mobile Unit';
+        end
+        if ~isempty(tmp)
+            if strcmp(tmpName(1:4), 'ANPR')
+                if tmp(1)==6
+                    camName = ['ANPR0' tmpName(tmp(1)-1)];
+                end
+                if tmp(1)>6
+                    camName = tmpName(1:(tmp(1)-1));
+                end
+            end
+        end
+        
+        num = isKey(camMap, camName);
+        if num == 0
+            data_by_cam = cell(1,9);
+            data_by_cam(1,:) =  data(j,:);
+            dir = [output_folder '\' camName];
+            if ~exist(dir, 'file')
+                mkdir(output_folder,camName);
+            end
+            camMap(camName) = data_by_cam;
+        end
+        if num == 1
+            data_by_cam = camMap(camName);
+            size_data = size(data_by_cam);
+            row = size_data(1);
+            data_by_cam(row+1,:) =  data(j,:);
+            camMap(camName) = data_by_cam;
+        end
+        %end
+    end
+    mapArray{number+1} = camMap;
+    clear camMap;
+ 
+    % File i/o to write into file as csv format.
+    mapsize = size(mapArray);
+    row = mapsize(1);
+    for id=1:row
+        tmpMap = mapArray{id};
+        if ~isempty(tmpMap)
+            keySet = keys(tmpMap);
+            for jd=1:length(keySet)
+                camName = keySet{jd};
+                dir = [output_folder '\' camName];
+                file = [dir '\' str2date(date) '.csv'];
+                if exist(file, 'file')
+                    fid = fopen(file, 'a+');
+                end
+                if ~exist(file, 'file')
+                    fid = fopen(file, 'wt');
+                end
+                data_by_cam = tmpMap(camName);
+                datasize = size(data_by_cam);
+                datarow = datasize(1);
+                for md=1:datarow
+                    fprintf(fid, '%s,%s,%s,%s,%s,%s,%s,%s,%s \n',data_by_cam{md,:});
+                end
+                fclose(fid);
+            end
+        end
+    end
+%% Navigation
+% * Go to 
+% <..\html\main.html main> 
+% * Go to 
+% <http://www.surrey.ac.uk/cs/research/msf/projects/polarbear_pattern_of_life_anpr_behaviour_extraction_analysis_and_recognition.htm Project page> 
+
+%% Author
+%  Haiyue Yuan, 02.2016, Depatment of Computer Science, University of Surrey
+
+##### SOURCE END #####
+--></body></html>

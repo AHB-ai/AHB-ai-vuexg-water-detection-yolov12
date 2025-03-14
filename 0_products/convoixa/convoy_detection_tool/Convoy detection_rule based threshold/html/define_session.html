@@ -1,0 +1,302 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Defining Session</title><meta name="generator" content="MATLAB 8.3"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2016-02-03"><meta name="DC.source" content="define_session.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1>Defining Session</h1><!--introduction--><pre>This function is to define session given a journey of a vehicle</pre><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">I/O</a></li><li><a href="#2">Code</a></li><li><a href="#4">Navigation</a></li><li><a href="#5">Author</a></li></ul></div><h2>I/O<a name="1"></a></h2><div><ul><li>INPUT:</li></ul></div><p>
+<table border=2>
+<tr><td><b>carID</b></td><td>this is the vrm of the target vehicle.</td></tr>
+<tr><td><b>tS</b></td><td>this is session break threshold in unit of seconds</td></tr>
+<tr><td><b>journeyMap</b></td><td>this is hash map structure that store journey information for each vehicle.</td></tr>
+</table>
+</p><div><ul><li>OUTPUT:</li></ul></div><p>
+<table border=2>
+<tr><td><b>session</b></td><td> this is the defined session data.</td></tr>
+</table>
+</p><h2>Code<a name="2"></a></h2><pre class="codeinput"><span class="keyword">function</span> [session] = define_session(carID, tS, journeyMap)
+</pre><pre class="codeinput">val = journeyMap(carID);
+length_tmp = length(val);
+tmp_session = cell(length_tmp,1);
+i = 1;
+count_s = 1;
+count_indx = 1;
+<span class="keyword">while</span> i+1 &lt; length_tmp+1
+    delta_t = val{i}.time - val{i+1}.time;
+    <span class="keyword">if</span> abs(delta_t) &lt; tS || abs(delta_t)==tS
+        <span class="keyword">if</span> (i==length_tmp-1)
+            <span class="keyword">if</span> (i+1 - count_indx &gt;1)
+                count_c = 1;
+                tmp_s = cell(length_tmp,1);
+                <span class="keyword">for</span> j = count_indx:i+1
+                    tmp_s{count_c} = val{j};
+                    count_c = count_c+1;
+                <span class="keyword">end</span>;
+                clear <span class="string">count_c</span>;
+                clear <span class="string">j</span>;
+                count_tmp_s = 0;
+                <span class="keyword">for</span> k = 1:length(tmp_s)
+                    <span class="keyword">if</span> ~isempty(tmp_s{k})
+                        count_tmp_s = count_tmp_s+1;
+                    <span class="keyword">end</span>;
+                <span class="keyword">end</span>;
+                A = cell(count_tmp_s,1);
+                <span class="keyword">for</span> m = 1:count_tmp_s
+                    A{m} = tmp_s{m};
+                <span class="keyword">end</span>;
+                clear <span class="string">tmp_s</span>;
+                <span class="keyword">if</span>(~isempty(A))
+                    tmp_session{count_s} = A;
+                    count_s = count_s+1;
+                <span class="keyword">end</span>;
+                clear <span class="string">A</span>;
+            <span class="keyword">end</span>;
+        <span class="keyword">end</span>;
+        i = i+1;
+    <span class="keyword">end</span>;
+    <span class="keyword">if</span> abs(delta_t) &gt; tS
+        count_indx = i+1;
+        <span class="keyword">if</span>(count_s==1)
+            count_c = 1;
+            tmp_s = cell(length_tmp,1);
+            <span class="keyword">for</span> j = 1:i
+                tmp_s{count_c} = val{j};
+                count_c = count_c+1;
+            <span class="keyword">end</span>;
+            clear <span class="string">j</span>;
+            clear <span class="string">count_c</span>;
+        <span class="keyword">end</span>;
+        <span class="keyword">if</span>(count_s~=1)
+            count_c = 1;
+            tmp_s = cell(length_tmp,1);
+            <span class="keyword">for</span> j = count_indx:i
+                tmp_s{count_c} = val{j};
+                count_c = count_c+1;
+            <span class="keyword">end</span>;
+            clear <span class="string">j</span>;
+            clear <span class="string">count_c</span>;
+        <span class="keyword">end</span>;
+        count_tmp_s = 0;
+        <span class="keyword">for</span> k = 1:length(tmp_s)
+            <span class="keyword">if</span> ~isempty(tmp_s{k})
+                count_tmp_s = count_tmp_s+1;
+            <span class="keyword">end</span>;
+        <span class="keyword">end</span>;
+        A = cell(count_tmp_s,1);
+        <span class="keyword">for</span> m = 1:count_tmp_s
+            A{m} = tmp_s{m};
+        <span class="keyword">end</span>;
+        i = i+1;
+        clear <span class="string">tmp_s</span>;
+        <span class="keyword">if</span>(~isempty(A))
+            tmp_session{count_s} = A;
+            count_s = count_s+1;
+        <span class="keyword">end</span>;
+        clear <span class="string">A</span>;
+    <span class="keyword">end</span>;
+<span class="keyword">end</span>;
+count_tmp_session = 0;
+<span class="keyword">for</span> k = 1:length(tmp_session)
+    <span class="keyword">if</span> ~isempty(tmp_session{k})
+        count_tmp_session = count_tmp_session +1;
+    <span class="keyword">end</span>;
+<span class="keyword">end</span>;
+session = cell(count_tmp_session,1);
+<span class="keyword">for</span> n = 1:count_tmp_session
+    session{n} = tmp_session{n};
+<span class="keyword">end</span>;
+clear <span class="string">count_s</span>;
+clear <span class="string">count_c</span>;
+</pre><h2>Navigation<a name="4"></a></h2><div><ul><li>Back to <a href="..\html\main.html">Convoy Analysis Tool</a></li><li>Go to <a href="http://www.surrey.ac.uk/cs/research/msf/projects/polarbear_pattern_of_life_anpr_behaviour_extraction_analysis_and_recognition.htm">Project page</a></li></ul></div><h2>Author<a name="5"></a></h2><pre>Haiyue Yuan, 01.2016, Depatment of Computer Science, University of Surrey</pre><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2014a</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% Defining Session
+%  This function is to define session given a journey of a vehicle
+%%
+%% I/O
+% * INPUT:
+%
+% <html>
+% <table border=2>
+% <tr><td><b>carID</b></td><td>this is the vrm of the target vehicle.</td></tr>
+% <tr><td><b>tS</b></td><td>this is session break threshold in unit of seconds</td></tr>
+% <tr><td><b>journeyMap</b></td><td>this is hash map structure that store journey information for each vehicle.</td></tr>
+% </table>
+% </html>
+%
+% * OUTPUT:
+%
+% <html>
+% <table border=2>
+% <tr><td><b>session</b></td><td> this is the defined session data.</td></tr>
+% </table>
+% </html>
+%
+%% Code
+function [session] = define_session(carID, tS, journeyMap)
+val = journeyMap(carID);
+length_tmp = length(val);
+tmp_session = cell(length_tmp,1);
+i = 1;
+count_s = 1;
+count_indx = 1;
+while i+1 < length_tmp+1
+    delta_t = val{i}.time - val{i+1}.time;
+    if abs(delta_t) < tS || abs(delta_t)==tS
+        if (i==length_tmp-1)
+            if (i+1 - count_indx >1)
+                count_c = 1;
+                tmp_s = cell(length_tmp,1);
+                for j = count_indx:i+1
+                    tmp_s{count_c} = val{j};
+                    count_c = count_c+1;
+                end;
+                clear count_c;
+                clear j;
+                count_tmp_s = 0;
+                for k = 1:length(tmp_s)
+                    if ~isempty(tmp_s{k})
+                        count_tmp_s = count_tmp_s+1;
+                    end;
+                end;
+                A = cell(count_tmp_s,1);
+                for m = 1:count_tmp_s
+                    A{m} = tmp_s{m};
+                end;
+                clear tmp_s;
+                if(~isempty(A))
+                    tmp_session{count_s} = A;
+                    count_s = count_s+1;
+                end;
+                clear A;
+            end;
+        end;
+        i = i+1;
+    end;
+    if abs(delta_t) > tS
+        count_indx = i+1;    
+        if(count_s==1)
+            count_c = 1;
+            tmp_s = cell(length_tmp,1);
+            for j = 1:i
+                tmp_s{count_c} = val{j};
+                count_c = count_c+1;
+            end;
+            clear j;
+            clear count_c;
+        end;
+        if(count_s~=1)
+            count_c = 1;
+            tmp_s = cell(length_tmp,1);
+            for j = count_indx:i
+                tmp_s{count_c} = val{j};
+                count_c = count_c+1;
+            end;
+            clear j;
+            clear count_c;
+        end;
+        count_tmp_s = 0;
+        for k = 1:length(tmp_s)
+            if ~isempty(tmp_s{k})
+                count_tmp_s = count_tmp_s+1;
+            end;
+        end;
+        A = cell(count_tmp_s,1);
+        for m = 1:count_tmp_s
+            A{m} = tmp_s{m};
+        end;
+        i = i+1;
+        clear tmp_s;
+        if(~isempty(A))
+            tmp_session{count_s} = A;
+            count_s = count_s+1;
+        end;
+        clear A;
+    end;
+end;
+count_tmp_session = 0;
+for k = 1:length(tmp_session)
+    if ~isempty(tmp_session{k})
+        count_tmp_session = count_tmp_session +1;
+    end;
+end;
+session = cell(count_tmp_session,1);
+for n = 1:count_tmp_session
+    session{n} = tmp_session{n};
+end;
+clear count_s;
+clear count_c;
+%% Navigation
+% * Back to 
+% <..\html\main.html Convoy Analysis Tool>
+% * Go to
+% <http://www.surrey.ac.uk/cs/research/msf/projects/polarbear_pattern_of_life_anpr_behaviour_extraction_analysis_and_recognition.htm Project page> 
+
+
+%% Author
+%  Haiyue Yuan, 01.2016, Depatment of Computer Science, University of Surrey
+%%
+
+##### SOURCE END #####
+--></body></html>

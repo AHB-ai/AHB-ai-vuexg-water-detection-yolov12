@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<datasource>
+  <BOF>
+    <Vendor>
+      <Name>North Gate</Name>
+      <Source>Data Warehouse</Source>
+    </Vendor>
+  </BOF>
+  <FileFormat>
+    <Format>
+      <Excel>
+        <FileSuffix>xlsx</FileSuffix>
+      </Excel>
+    </Format>
+    <NameFormat>format_3</NameFormat>
+    <Sheets>single</Sheets>
+    <Header>true</Header>
+  </FileFormat>
+  <Content>
+    <VRM>
+      <Position>0</Position>
+    </VRM>
+    <CaptureDate>
+      <Position>1</Position>
+    </CaptureDate>
+    <CaptureTime timeFormat = "hh:mm:ss">
+      <Position>2</Position>
+    </CaptureTime>
+    <CameraName>
+      <Position>3</Position>
+    </CameraName>
+    <Location geoFormat = "OS">
+      <SeparateLocation>
+        <Easting coordsFormat = "Easting">
+          <Position>4</Position>
+        </Easting>
+        <Northing coordsFormat = "Northing">
+          <Position>5</Position>
+        </Northing>
+      </SeparateLocation>
+    </Location>
+		<Make>
+	    <Position>6</Position>
+	</Make>
+	<Model>
+	    <Position>7</Position>
+	</Model>
+	<Color>
+	    <Position>8</Position>
+	</Color>
+	<Tax>
+	    <Position>9</Position>
+	</Tax>
+  </Content>
+</datasource>

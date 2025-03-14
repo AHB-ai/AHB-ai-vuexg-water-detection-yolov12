@@ -1,0 +1,237 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Convoy Analysis Tool</title><meta name="generator" content="MATLAB 8.3"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2016-01-28"><meta name="DC.source" content="main.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1>Convoy Analysis Tool</h1><!--introduction--><pre>This script is a brief user guide to use Convoy Analysis Tool. It includes an example of how to use the software in MATLAB enviroment.</pre><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Initialise variables</a></li><li><a href="#4">Initialise path to read and write data</a></li><li><a href="#5">Enter search queries</a></li><li><a href="#6">Start convoy analysis</a></li><li><a href="#7">Initialise output</a></li><li><a href="#12">Linked Functions</a></li><li><a href="#13">Navigation</a></li><li><a href="#15">Author</a></li></ul></div><h2>Initialise variables<a name="1"></a></h2><div><ul><li>anprMap: a static hash map contains essential information of ANPR camera.</li><li>session_break: threshold for session break, it defines the maximum time gap between two adjacent ANPR reads of a single vehicle.</li><li>num_in_session: threshold for convoy session size, it is the minimum number of cameras that two vehicles passed together in a convoy session.</li><li>search_window: the maximum time difference between two vehicles in a genuine convoy session while passing the same camera.</li></ul></div><pre class="codeinput">load <span class="string">anprMap</span>;
+</pre><pre class="codeinput">session_break = #;
+num_in_session = #;
+search_window = #;
+</pre><p>Session break threshold is set to be 5 hours, convoy session size is set to be 5, and search window threshold is set to be 30 seconds.</p><h2>Initialise path to read and write data<a name="4"></a></h2><div><ul><li>input_path: where to store ANPR reads</li><li>journey_path: where to store processed journey information</li><li>convoy_path: where to store extracted convoy results</li><li>iopath: where to store convoy results based on user search queries</li></ul></div><pre class="codeinput">input_path = <span class="string">'..\data.input'</span>;
+journey_path = <span class="string">'..\journey'</span>;
+convoy_path = <span class="string">'..\convoy results'</span>;
+iopath = <span class="string">'..\convoy results_csv'</span>;
+<span class="keyword">if</span> ~exist(iopath, <span class="string">'file'</span>)
+    mkdir(iopath);
+<span class="keyword">end</span>
+</pre><h2>Enter search queries<a name="5"></a></h2><div><ul><li>date_start: starting date in format of dd-mm-yyyy</li><li>date_end: ending date in format of dd-mm-yyyy</li><li>time_start: starting time of the day in format of hh:mm:ss</li><li>time_end: ending time of the day in format of hh:mm:ss</li></ul></div><pre class="codeinput">date_start = <span class="string">'dd-mm-yyyy'</span>;
+date_end = <span class="string">'dd-mm-yyyy'</span>;
+time_start = <span class="string">'hh:mm:ss'</span>;
+time_end = <span class="string">'hh:mm:ss'</span>;
+</pre><h2>Start convoy analysis<a name="6"></a></h2><p>Call convoyAnalysisInterface function to start convoy analysis. See <a href="..\html\convoyAnalysisInterface.html">Convoy Analysis Interface</a></p><pre class="codeinput">[convoyOutput_svrm, convoyOutput_dvrm] = convoyAnalysisInterface(anprMap, input_path, journey_path, convoy_path, date_start,date_end, time_start, time_end, session_break, num_in_session, search_window);
+timestamp = datestr(now);
+timestamp(timestamp==<span class="string">':'</span>)=<span class="string">''</span>;
+</pre><h2>Initialise output<a name="7"></a></h2><div><ul><li>iopath_file: path to store search query</li><li>iopath_csv_s: path to store convoy results that involve only two vehicles (2-vehicle convoy).</li><li>iopath_csv_r: path to store convoy results that invovle two vehilce, and these two vehicles have been identified in a convoy more than once (repeated 2-vehicle convoy).</li><li>iopath_csv_m: path to store convoy results that involve more than two vehicles in one single convoy session (n-vehicle convoy).</li></ul></div><pre class="codeinput">iopath_file = [iopath <span class="string">'\'</span> timestamp <span class="string">'\'</span>];
+iopath_csv_s = [iopath <span class="string">'\'</span> timestamp <span class="string">'\csv_s\'</span>];
+iopath_csv_r = [iopath <span class="string">'\'</span> timestamp <span class="string">'\csv_r\'</span>];
+iopath_csv_m = [iopath <span class="string">'\'</span> timestamp <span class="string">'\csv_m\'</span>];
+</pre><p>Output 2-vehicle convoy</p><pre class="codeinput"><span class="keyword">if</span> ~exist(iopath_csv_s, <span class="string">'file'</span>)
+    mkdir(iopath_csv_s);
+<span class="keyword">end</span>
+outputConvoyCSV(iopath_csv_s, convoyOutput_dvrm);
+</pre><p>Conduct analysis to identify repeated 2-vehicle convoy, and output it. See <a href="..\html\extractRepeatedConvoyPairs.html">Repeated Convoy Analysis</a></p><pre class="codeinput">repeatedConvoy = extractRepeatedConvoyPairs(convoyOutput_dvrm);
+<span class="keyword">if</span> ~exist(iopath_csv_r, <span class="string">'file'</span>)
+    mkdir(iopath_csv_r);
+<span class="keyword">end</span>
+outputRepeatedConvoyCSV(iopath_csv_r, repeatedConvoy);
+</pre><p>Conduct analysis to identify n-vehicle convoy, and output it. See <a href="..\html\extractMultipleVehicleConvoy.html">N-vehicle Convoy Analysis</a></p><pre class="codeinput">threshold_session_num = 3;
+multipleVehicleConvoy = extractMultipleVehicleConvoy(convoyOutput_svrm, 3, anprMap, convoy_path);
+<span class="keyword">if</span> ~exist(iopath_csv_m, <span class="string">'file'</span>)
+    mkdir(iopath_csv_m);
+<span class="keyword">end</span>
+outputMultipleConvoy(iopath_csv_m, multipleVehicleConvoy);
+</pre><p>Output search query</p><pre class="codeinput"><span class="keyword">if</span> ~exist(iopath_file, <span class="string">'file'</span>)
+    mkdir(iopath_file);
+<span class="keyword">end</span>
+textFile = [iopath_file <span class="string">'search_query.txt'</span>];
+fid=fopen(textFile,<span class="string">'w'</span>);
+fprintf(fid, [date_start <span class="string">' '</span> date_end <span class="string">' '</span> time_start <span class="string">' '</span> time_end <span class="string">' '</span> num2str(session_break) <span class="string">' '</span> num2str(num_in_session) <span class="string">' '</span> num2str(search_window) <span class="string">'\n'</span>]);
+fclose(fid);
+</pre><h2>Linked Functions<a name="12"></a></h2><div><ul><li>See: <a href="..\html\convoyAnalysisInterface.html">Convoy Analysis Interface</a></li><li>See: <a href="..\html\extractRepeatedConvoyPairs.html">Repeated Convoy Analysis</a></li><li>See: <a href="..\html\extractMultipleVehicleConvoy.html">N-vehicle Convoy Analysis</a></li></ul></div><h2>Navigation<a name="13"></a></h2><div><ul><li>Go to <a href="http://www.surrey.ac.uk/cs/research/msf/projects/polarbear_pattern_of_life_anpr_behaviour_extraction_analysis_and_recognition.htm">Project page</a></li></ul></div><p><img vspace="5" hspace="5" src="..\polarbear.png" alt=""> </p><h2>Author<a name="15"></a></h2><pre>Haiyue Yuan, 01.2016, Depatment of Computer Science, University of Surrey</pre><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2014a</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% Convoy Analysis Tool
+%  This script is a brief user guide to use Convoy Analysis Tool. It includes an example of how to use the software in MATLAB enviroment.
+
+%% Initialise variables
+% * anprMap: a static hash map contains essential information of ANPR 
+% camera.
+% * session_break: threshold for session break, it defines the maximum time 
+% gap between two adjacent ANPR reads of a single vehicle.
+% * num_in_session: threshold for convoy session size, it is the minimum
+% number of cameras that two vehicles passed together in a convoy session.
+% * search_window: the maximum time difference between two vehicles in a
+% genuine convoy session while passing the same camera.
+
+load anprMap;
+session_break = #; 
+num_in_session = #;
+search_window = #; 
+
+%%
+% Session break threshold is set to be 5 hours, convoy session size is set
+% to be 5, and search window threshold is set to be 30 seconds.
+
+%% Initialise path to read and write data 
+% * input_path: where to store ANPR reads
+% * journey_path: where to store processed journey information
+% * convoy_path: where to store extracted convoy results
+% * iopath: where to store convoy results based on user search queries
+input_path = '..\data.input';
+journey_path = '..\journey';
+convoy_path = '..\convoy results';
+iopath = '..\convoy results_csv';
+if ~exist(iopath, 'file')
+    mkdir(iopath);
+end
+
+%% Enter search queries
+% * date_start: starting date in format of dd-mm-yyyy
+% * date_end: ending date in format of dd-mm-yyyy
+% * time_start: starting time of the day in format of hh:mm:ss
+% * time_end: ending time of the day in format of hh:mm:ss
+date_start = 'dd-mm-yyyy';
+date_end = 'dd-mm-yyyy';
+time_start = 'hh:mm:ss';
+time_end = 'hh:mm:ss';
+
+%% Start convoy analysis
+% Call convoyAnalysisInterface function to start convoy analysis.
+% See
+% <..\html\convoyAnalysisInterface.html Convoy Analysis Interface>
+[convoyOutput_svrm, convoyOutput_dvrm] = convoyAnalysisInterface(anprMap, input_path, journey_path, convoy_path, date_start,date_end, time_start, time_end, session_break, num_in_session, search_window);
+timestamp = datestr(now);
+timestamp(timestamp==':')='';
+
+%% Initialise output 
+% * iopath_file: path to store search query 
+% * iopath_csv_s: path to store convoy results that involve only two
+% vehicles (2-vehicle convoy).
+% * iopath_csv_r: path to store convoy results that invovle two vehilce, 
+% and these two vehicles have been identified in a convoy more than once
+% (repeated 2-vehicle convoy).
+% * iopath_csv_m: path to store convoy results that involve more than two
+% vehicles in one single convoy session (n-vehicle convoy).
+iopath_file = [iopath '\' timestamp '\'];
+iopath_csv_s = [iopath '\' timestamp '\csv_s\'];
+iopath_csv_r = [iopath '\' timestamp '\csv_r\'];
+iopath_csv_m = [iopath '\' timestamp '\csv_m\'];
+
+%% 
+% Output 2-vehicle convoy
+if ~exist(iopath_csv_s, 'file')
+    mkdir(iopath_csv_s);
+end
+outputConvoyCSV(iopath_csv_s, convoyOutput_dvrm);
+
+%% 
+% Conduct analysis to identify repeated 2-vehicle convoy, and output it.
+% See
+% <..\html\extractRepeatedConvoyPairs.html Repeated Convoy Analysis>
+repeatedConvoy = extractRepeatedConvoyPairs(convoyOutput_dvrm);
+if ~exist(iopath_csv_r, 'file')
+    mkdir(iopath_csv_r);
+end
+outputRepeatedConvoyCSV(iopath_csv_r, repeatedConvoy);
+
+%% 
+% Conduct analysis to identify n-vehicle convoy, and output it.
+% See
+% <..\html\extractMultipleVehicleConvoy.html N-vehicle Convoy Analysis>
+threshold_session_num = 3;
+multipleVehicleConvoy = extractMultipleVehicleConvoy(convoyOutput_svrm, 3, anprMap, convoy_path);
+if ~exist(iopath_csv_m, 'file')
+    mkdir(iopath_csv_m);
+end
+outputMultipleConvoy(iopath_csv_m, multipleVehicleConvoy);
+%% 
+% Output search query
+if ~exist(iopath_file, 'file')
+    mkdir(iopath_file);
+end
+textFile = [iopath_file 'search_query.txt'];
+fid=fopen(textFile,'w');
+fprintf(fid, [date_start ' ' date_end ' ' time_start ' ' time_end ' ' num2str(session_break) ' ' num2str(num_in_session) ' ' num2str(search_window) '\n']);
+fclose(fid);
+
+%% Linked Functions
+% * See:
+% <..\html\convoyAnalysisInterface.html Convoy Analysis Interface>
+% * See:
+% <..\html\extractRepeatedConvoyPairs.html Repeated Convoy Analysis>
+% * See:
+% <..\html\extractMultipleVehicleConvoy.html N-vehicle Convoy Analysis>
+
+%% Navigation
+% * Go to 
+% <http://www.surrey.ac.uk/cs/research/msf/projects/polarbear_pattern_of_life_anpr_behaviour_extraction_analysis_and_recognition.htm Project page> 
+%%
+% <<..\polarbear.png>>
+
+%% Author
+%  Haiyue Yuan, 01.2016, Depatment of Computer Science, University of Surrey
+
+##### SOURCE END #####
+--></body></html>

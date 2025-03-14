@@ -1,0 +1,547 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>File Converter</title><meta name="generator" content="MATLAB 8.3"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2016-02-09"><meta name="DC.source" content="fileConverter.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1>File Converter</h1><!--introduction--><p>This script is used to convert xlsx file to a csv file according to the data descriptor, and intermediate data formatt descriptor. The following explaines:</p><div><ul><li>1 = "VRM"</li><li>2 = "CameraName"</li><li>3 = "hh:mm:ss"</li><li>4 = "dd/mm/yyyy hh:mm:ss"</li><li>10 = "Degree North_West"</li><li>11 = "Degree North"</li><li>12 = "Degree West"</li><li>20 = "OS Easting_Northing"</li><li>21 = "OS Easting"</li><li>22 = "OS Northing"</li><li>5 = "Make"</li><li>6 = "Model"</li><li>7 = "Color"</li><li>8 = "Tax" These numbers are defined in Apache POI java file, and they should be used together with intermediate data descriptor.</li></ul></div><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">I/O</a></li><li><a href="#2">Code</a></li><li><a href="#16">Linked Functions</a></li><li><a href="#17">Navigation</a></li><li><a href="#18">Author</a></li></ul></div><h2>I/O<a name="1"></a></h2><div><ul><li>INPUT:</li></ul></div><p>
+<table border=2>
+<tr><td><b>dsfile</b></td><td>this is the data descriptor file (xml file)</td></tr>
+<tr><td><b>inputfile</b></td><td>this is the xlsx file contains raw ANPR data</td></tr>
+<tr><td><b>intermediate_format</b></td><td>this is the intermediate data format descriptor</td></tr>
+<tr><td><b>interfile</b></td><td>the intermediate file that describes the format of converted data, which provide information of how the output data should be consturcted.</td></tr>
+</table>
+</p><div><ul><li>OUTPUT</li></ul></div><p>
+<table border=2>
+<tr><td><b>Ouput</b></td><td>a converted csv file</td></tr>
+</table>
+</p><h2>Code<a name="2"></a></h2><pre class="codeinput"><span class="keyword">function</span> fileConverter(datasource, inputfile, intermediate_format, outputfile, date)
+</pre><pre class="codeinput">import <span class="string">java.util.ArrayList</span>;
+bofName = datasource{1};
+bofSource = datasource{2};
+typeStatus = datasource{3};
+sheetStatus = datasource{4};
+vrmPos = datasource{5};
+timePos = datasource{6};
+camPos = datasource{7};
+geoFormat = datasource{8};
+coordsFormat = datasource{9};
+locFormat = datasource{10}
+locPos = datasource{11};
+headerStatus = datasource{12};
+timeFormat = datasource{13};
+nameFormat = datasource{14};
+makePos = datasource{15};
+modelPos = datasource{16};
+colorPos = datasource{17};
+taxPos = datasource{18};
+
+<span class="keyword">if</span> exist(outputfile, <span class="string">'file'</span>)
+    fprintf(<span class="string">'CSV file exists, skipped!\n'</span>);
+<span class="keyword">else</span>
+</pre><pre class="codeinput">    fprintf(<span class="string">'CSV file is being created...'</span>);
+
+    <span class="keyword">if</span> strcmp(bofName,<span class="string">'North Gate'</span>)
+        <span class="keyword">switch</span> typeStatus
+            <span class="keyword">case</span> <span class="string">'xlsx'</span>
+                <span class="keyword">switch</span> bofSource
+                    <span class="keyword">case</span> <span class="string">'BOF'</span>
+</pre><pre class="codeinput">                            column_list = java.util.ArrayList();
+                            column_list.add(int32(vrmPos));
+                            column_list.add(int32(timePos));
+                            column_list.add(int32(camPos));
+</pre><p>VRM and Camera name are identified as the key information</p><pre class="codeinput">                            vrm = 1;
+                            cam = 2;
+                            <span class="keyword">if</span> strcmp(timeFormat, <span class="string">'dd/mm/yyyy hh:mm:ss'</span>)
+                                time = 4;
+                            <span class="keyword">end</span>
+                            <span class="keyword">if</span> strcmp(timeFormat, <span class="string">'hh:mm:ss'</span>)
+                                time = 3;
+                            <span class="keyword">end</span>
+                            format_list = java.util.ArrayList();
+                            format_list.add(int32(vrm));
+                            format_list.add(int32(time));
+                            format_list.add(int32(cam));
+
+                            <span class="comment">%$</span>
+                            <span class="comment">% Identify which column contains the specific</span>
+                            <span class="comment">% category of information for new converted</span>
+                            <span class="comment">% file, this will be used together with</span>
+                            <span class="comment">% intermediate format descriptor to format the</span>
+                            <span class="comment">% output intermediate data file</span>
+                            tempArray = [vrmPos, timePos, camPos];
+                            sortArray = sort(tempArray);
+                            <span class="keyword">for</span> i=1:length(sortArray)
+                                <span class="keyword">if</span> sortArray(i)==vrmPos
+                                    vrmIdx = i;
+                                <span class="keyword">end</span>
+                                <span class="keyword">if</span> sortArray(i)==timePos
+                                    timeIdx = i;
+                                <span class="keyword">end</span>
+                                <span class="keyword">if</span> sortArray(i)==camPos
+                                    camIdx = i;
+                                <span class="keyword">end</span>
+                            <span class="keyword">end</span>
+                            locIdx = 4;
+                            <span class="keyword">if</span> length(locPos)&gt;1
+                                column_list.add(int32(locPos{1}));
+                                column_list.add(int32(locPos{2}));
+                                <span class="keyword">if</span> strcmp(geoFormat, <span class="string">'Degree'</span>)
+                                    degree_north = 11;
+                                    degree_west = 12;
+                                    format_list.add(int32(degree_north));
+                                    format_list.add(int32(degree_west));
+                                <span class="keyword">end</span>;
+                                <span class="keyword">if</span> strcmp(geoFormat, <span class="string">'OS'</span>)
+                                    easting = 21;
+                                    northing = 22;
+                                    format_list.add(int32(easting));
+                                    format_list.add(int32(northing));
+                                <span class="keyword">end</span>;
+                            <span class="keyword">end</span>;
+                            <span class="keyword">if</span> length(locPos)==1
+                                column_list.add(int32(locPos));
+                                <span class="keyword">if</span> strcmp(geoFormat, <span class="string">'Degree'</span>)
+                                    degree = 10;
+                                    format_list.add(int32(degree));
+                                <span class="keyword">end</span>;
+                                <span class="keyword">if</span> strcmp(geoFormat, <span class="string">'OS'</span>)
+                                    os_coords = 20;
+                                    format_list.add(int32(os_coords));
+                                <span class="keyword">end</span>;
+                            <span class="keyword">end</span>
+</pre><p>This is the core function to convert raw data, which calls a external java function See: <a href="..\html\xls2csv.html">File Converter Java</a></p><pre class="codeinput">                            xlsx2csv(inputfile, outputfile, column_list, format_list, date);
+</pre><pre class="codeinput">                    <span class="keyword">case</span> <span class="string">'Data Warehouse'</span>
+</pre><pre class="codeinput">                            column_list = java.util.ArrayList();
+                            column_list.add(int32(vrmPos));
+                            column_list.add(int32(timePos));
+                            column_list.add(int32(camPos));
+</pre><p>VRM and Camera name are identified as the key information</p><pre class="codeinput">                            vrm = 1;
+                            cam = 2;
+                            <span class="keyword">if</span> strcmp(timeFormat, <span class="string">'dd/mm/yyyy hh:mm:ss'</span>)
+                                time = 4;
+                            <span class="keyword">end</span>
+                            <span class="keyword">if</span> strcmp(timeFormat, <span class="string">'hh:mm:ss'</span>)
+                                time = 3;
+                            <span class="keyword">end</span>
+                            format_list = java.util.ArrayList();
+                            format_list.add(int32(vrm));
+                            format_list.add(int32(time));
+                            format_list.add(int32(cam));
+
+                            tempArray = [vrmPos, timePos, camPos];
+                            sortArray = sort(tempArray);
+
+                            <span class="keyword">for</span> i=1:length(sortArray)
+                                <span class="keyword">if</span> sortArray(i)==vrmPos
+                                    vrmIdx = i;
+                                <span class="keyword">end</span>
+                                <span class="keyword">if</span> sortArray(i)==timePos
+                                    timeIdx = i;
+                                <span class="keyword">end</span>
+                                <span class="keyword">if</span> sortArray(i)==camPos
+                                    camIdx = i;
+                                <span class="keyword">end</span>
+                            <span class="keyword">end</span>
+                            locIdx = 4;
+
+                            <span class="keyword">if</span> length(locPos)&gt;1
+                                column_list.add(int32(locPos{1}));
+                                column_list.add(int32(locPos{2}));
+                                <span class="keyword">if</span> strcmp(geoFormat, <span class="string">'Degree'</span>)
+                                    degree_north = 11;
+                                    degree_west = 12;
+                                    format_list.add(int32(degree_north));
+                                    format_list.add(int32(degree_west));
+                                <span class="keyword">end</span>;
+                                <span class="keyword">if</span> strcmp(geoFormat, <span class="string">'OS'</span>)
+                                    easting = 21;
+                                    northing = 22;
+                                    format_list.add(int32(easting));
+                                    format_list.add(int32(northing));
+                                <span class="keyword">end</span>;
+                            <span class="keyword">end</span>;
+                            <span class="keyword">if</span> length(locPos)==1
+                                column_list.add(int32(locPos));
+                                <span class="keyword">if</span> strcmp(geoFormat, <span class="string">'Degree'</span>)
+                                    degree = 10;
+                                    format_list.add(int32(degree));
+                                <span class="keyword">end</span>;
+                                <span class="keyword">if</span> strcmp(geoFormat, <span class="string">'OS'</span>)
+                                    os_coords = 20;
+                                    format_list.add(int32(os_coords));
+                                <span class="keyword">end</span>;
+                            <span class="keyword">end</span>
+                            column_list.add(int32(makePos));
+                            column_list.add(int32(modelPos));
+                            column_list.add(int32(colorPos));
+                            column_list.add(int32(taxPos));
+                            make = 5;
+                            model = 6;
+                            color = 7;
+                            tax = 8;
+                            format_list.add(int32(make));
+                            format_list.add(int32(model));
+                            format_list.add(int32(color));
+                            format_list.add(int32(tax));
+</pre><p>This is the core function to convert raw data, which calls a external java function See: <a href="..\html\xls2csv.html">File Converter Java</a></p><pre class="codeinput">                            xlsx2csv(inputfile, outputfile, column_list, format_list, date);
+</pre><pre class="codeinput">                <span class="keyword">end</span>;
+            <span class="keyword">case</span> <span class="string">'xls'</span>
+            <span class="keyword">case</span> <span class="string">'csv'</span>
+        <span class="keyword">end</span>;
+    <span class="keyword">end</span>;
+
+    <span class="comment">% Here need to be extended once the system requirements for CLEARTONE</span>
+    <span class="comment">% and ESSA system are confirmed.</span>
+    <span class="comment">%if strcmp(bofName,'CLEARTONE')</span>
+    <span class="comment">%end</span>
+
+    <span class="comment">%if strcmp(bofName,'ESSA')</span>
+    <span class="comment">%end</span>
+</pre><p>Determine if the original file has header or not</p><pre class="codeinput">    <span class="keyword">if</span> strcmp(headerStatus, <span class="string">'true'</span>)
+        headerIdx = 2;
+        interFormat_v2(headerIdx, vrmIdx, timeIdx, camIdx, locIdx, intermediate_format, outputfile);
+    <span class="keyword">end</span>
+</pre><p>Determine if the original file has header or not</p><pre class="codeinput">    <span class="keyword">if</span> strcmp(headerStatus, <span class="string">'false'</span>)
+        headerIdx = 1;
+        interFormat_v2(headerIdx, vrmIdx, timeIdx, camIdx, locIdx, intermediate_format, outputfile);
+    <span class="keyword">end</span>
+</pre><pre class="codeinput"><span class="keyword">end</span>
+</pre><h2>Linked Functions<a name="16"></a></h2><div><ul><li>See: <a href="..\html\xls2csv.html">File Converter Java</a></li></ul></div><h2>Navigation<a name="17"></a></h2><div><ul><li>Go to <a href="..\html\main.html">main</a></li><li>Go to <a href="http://www.surrey.ac.uk/cs/research/msf/projects/polarbear_pattern_of_life_anpr_behaviour_extraction_analysis_and_recognition.htm">Project page</a></li></ul></div><h2>Author<a name="18"></a></h2><pre>Haiyue Yuan, 02.2016, Depatment of Computer Science, University of Surrey</pre><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2014a</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% File Converter
+% This script is used to convert xlsx file to a csv file according to the
+% data descriptor, and intermediate data formatt descriptor. The following
+% explaines: 
+%
+% * 1 = "VRM"
+% * 2 = "CameraName"
+% * 3 = "hh:mm:ss"
+% * 4 = "dd/mm/yyyy hh:mm:ss"
+% * 10 = "Degree North_West"
+% * 11 = "Degree North"
+% * 12 = "Degree West"
+% * 20 = "OS Easting_Northing"
+% * 21 = "OS Easting"
+% * 22 = "OS Northing"
+% * 5 = "Make"
+% * 6 = "Model"
+% * 7 = "Color"
+% * 8 = "Tax"
+% These numbers are defined in Apache POI java file, and they should be used together with intermediate data descriptor.
+
+%% I/O
+% * INPUT:
+%
+% <html>
+% <table border=2>
+% <tr><td><b>dsfile</b></td><td>this is the data descriptor file (xml file)</td></tr>
+% <tr><td><b>inputfile</b></td><td>this is the xlsx file contains raw ANPR data</td></tr>
+% <tr><td><b>intermediate_format</b></td><td>this is the intermediate data format descriptor</td></tr>
+% <tr><td><b>interfile</b></td><td>the intermediate file that describes the format of converted data, which provide information of how the output data should be consturcted.</td></tr>
+% </table>
+% </html>
+%
+% * OUTPUT
+% 
+% <html>
+% <table border=2>
+% <tr><td><b>Ouput</b></td><td>a converted csv file</td></tr>
+% </table>
+% </html>
+%
+%% Code
+
+function fileConverter(datasource, inputfile, intermediate_format, outputfile, date)
+
+import java.util.ArrayList;
+bofName = datasource{1};
+bofSource = datasource{2};
+typeStatus = datasource{3};
+sheetStatus = datasource{4};
+vrmPos = datasource{5};
+timePos = datasource{6};
+camPos = datasource{7};
+geoFormat = datasource{8};
+coordsFormat = datasource{9};
+locFormat = datasource{10}
+locPos = datasource{11};
+headerStatus = datasource{12};
+timeFormat = datasource{13};
+nameFormat = datasource{14};
+makePos = datasource{15};
+modelPos = datasource{16};
+colorPos = datasource{17};
+taxPos = datasource{18};
+
+if exist(outputfile, 'file')
+    fprintf('CSV file exists, skipped!\n');
+else
+    fprintf('CSV file is being created...');
+    
+    if strcmp(bofName,'North Gate')
+        switch typeStatus
+            case 'xlsx'
+                switch bofSource
+                    case 'BOF'
+                            column_list = java.util.ArrayList();
+                            column_list.add(int32(vrmPos));
+                            column_list.add(int32(timePos));
+                            column_list.add(int32(camPos));
+                                                                                         
+                            %%
+                            % VRM and Camera name are identified as the key information 
+                            vrm = 1;
+                            cam = 2;
+                            if strcmp(timeFormat, 'dd/mm/yyyy hh:mm:ss')
+                                time = 4;
+                            end
+                            if strcmp(timeFormat, 'hh:mm:ss')
+                                time = 3;
+                            end
+                            format_list = java.util.ArrayList();
+                            format_list.add(int32(vrm));
+                            format_list.add(int32(time));
+                            format_list.add(int32(cam));
+                            
+                            %$ 
+                            % Identify which column contains the specific
+                            % category of information for new converted
+                            % file, this will be used together with
+                            % intermediate format descriptor to format the
+                            % output intermediate data file
+                            tempArray = [vrmPos, timePos, camPos];
+                            sortArray = sort(tempArray);                            
+                            for i=1:length(sortArray)
+                                if sortArray(i)==vrmPos
+                                    vrmIdx = i;
+                                end
+                                if sortArray(i)==timePos
+                                    timeIdx = i;
+                                end
+                                if sortArray(i)==camPos
+                                    camIdx = i;
+                                end
+                            end
+                            locIdx = 4;
+                            if length(locPos)>1
+                                column_list.add(int32(locPos{1}));
+                                column_list.add(int32(locPos{2}));
+                                if strcmp(geoFormat, 'Degree')
+                                    degree_north = 11;
+                                    degree_west = 12;
+                                    format_list.add(int32(degree_north));
+                                    format_list.add(int32(degree_west));
+                                end;
+                                if strcmp(geoFormat, 'OS')
+                                    easting = 21;
+                                    northing = 22;
+                                    format_list.add(int32(easting));
+                                    format_list.add(int32(northing));
+                                end;
+                            end;
+                            if length(locPos)==1                                
+                                column_list.add(int32(locPos));
+                                if strcmp(geoFormat, 'Degree')
+                                    degree = 10;
+                                    format_list.add(int32(degree));
+                                end;
+                                if strcmp(geoFormat, 'OS')
+                                    os_coords = 20;
+                                    format_list.add(int32(os_coords));                                    
+                                end;
+                            end
+                            %%
+                            % This is the core function to convert raw
+                            % data, which calls a external java function
+                            % See:
+                            % <..\html\xls2csv.html File Converter Java>
+                            xlsx2csv(inputfile, outputfile, column_list, format_list, date);                            
+                    case 'Data Warehouse'
+                            column_list = java.util.ArrayList();
+                            column_list.add(int32(vrmPos));
+                            column_list.add(int32(timePos));
+                            column_list.add(int32(camPos));
+
+                            %%
+                            % VRM and Camera name are identified as the key
+                            % information 
+                            vrm = 1;
+                            cam = 2;
+                            if strcmp(timeFormat, 'dd/mm/yyyy hh:mm:ss')
+                                time = 4;
+                            end
+                            if strcmp(timeFormat, 'hh:mm:ss')
+                                time = 3;
+                            end
+                            format_list = java.util.ArrayList();
+                            format_list.add(int32(vrm));
+                            format_list.add(int32(time));
+                            format_list.add(int32(cam));
+                            
+                            tempArray = [vrmPos, timePos, camPos];
+                            sortArray = sort(tempArray);                            
+                            
+                            for i=1:length(sortArray)
+                                if sortArray(i)==vrmPos
+                                    vrmIdx = i;
+                                end
+                                if sortArray(i)==timePos
+                                    timeIdx = i;
+                                end
+                                if sortArray(i)==camPos
+                                    camIdx = i;
+                                end
+                            end
+                            locIdx = 4;
+                            
+                            if length(locPos)>1
+                                column_list.add(int32(locPos{1}));
+                                column_list.add(int32(locPos{2}));
+                                if strcmp(geoFormat, 'Degree')
+                                    degree_north = 11;
+                                    degree_west = 12;
+                                    format_list.add(int32(degree_north));
+                                    format_list.add(int32(degree_west));
+                                end;
+                                if strcmp(geoFormat, 'OS')
+                                    easting = 21;
+                                    northing = 22;
+                                    format_list.add(int32(easting));
+                                    format_list.add(int32(northing));
+                                end;
+                            end;
+                            if length(locPos)==1                                
+                                column_list.add(int32(locPos));
+                                if strcmp(geoFormat, 'Degree')
+                                    degree = 10;
+                                    format_list.add(int32(degree));
+                                end;
+                                if strcmp(geoFormat, 'OS')
+                                    os_coords = 20;
+                                    format_list.add(int32(os_coords));                                    
+                                end;
+                            end
+                            column_list.add(int32(makePos));
+                            column_list.add(int32(modelPos));
+                            column_list.add(int32(colorPos));
+                            column_list.add(int32(taxPos));
+                            make = 5;
+                            model = 6;
+                            color = 7;
+                            tax = 8;
+                            format_list.add(int32(make));
+                            format_list.add(int32(model));
+                            format_list.add(int32(color));
+                            format_list.add(int32(tax));
+                            %%
+                            % This is the core function to convert raw
+                            % data, which calls a external java function
+                            % See:
+                            % <..\html\xls2csv.html File Converter Java>
+                            xlsx2csv(inputfile, outputfile, column_list, format_list, date);
+                end;
+            case 'xls'
+            case 'csv'
+        end;
+    end;
+
+    % Here need to be extended once the system requirements for CLEARTONE
+    % and ESSA system are confirmed.
+    %if strcmp(bofName,'CLEARTONE')
+    %end
+    
+    %if strcmp(bofName,'ESSA')
+    %end
+
+    %%
+    % Determine if the original file has header or not
+    if strcmp(headerStatus, 'true')
+        headerIdx = 2;
+        interFormat_v2(headerIdx, vrmIdx, timeIdx, camIdx, locIdx, intermediate_format, outputfile);
+    end
+    %%
+    % Determine if the original file has header or not
+    if strcmp(headerStatus, 'false')
+        headerIdx = 1;
+        interFormat_v2(headerIdx, vrmIdx, timeIdx, camIdx, locIdx, intermediate_format, outputfile);
+    end
+end
+%% Linked Functions
+% * See:
+% <..\html\xls2csv.html File Converter Java>
+
+%% Navigation
+% * Go to 
+% <..\html\main.html main> 
+% * Go to 
+% <http://www.surrey.ac.uk/cs/research/msf/projects/polarbear_pattern_of_life_anpr_behaviour_extraction_analysis_and_recognition.htm Project page> 
+
+%% Author
+%  Haiyue Yuan, 02.2016, Depatment of Computer Science, University of Surrey
+
+
+##### SOURCE END #####
+--></body></html>

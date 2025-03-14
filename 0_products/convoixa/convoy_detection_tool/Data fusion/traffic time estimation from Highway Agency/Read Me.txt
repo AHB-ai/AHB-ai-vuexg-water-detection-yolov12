@@ -1,0 +1,6 @@
+The public avaiable data are journey time and pre-defined location information.
+All the data has been saved in disc '' '' '' ''.
+They are in xml format, the source code is used to extract and convert useful information. 
+Each source code has self explantary comments, and there is an usage example in main.m.
+
+

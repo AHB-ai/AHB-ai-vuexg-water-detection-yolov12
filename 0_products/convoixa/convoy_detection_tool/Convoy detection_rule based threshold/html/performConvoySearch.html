@@ -1,0 +1,501 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Search for Convoy</title><meta name="generator" content="MATLAB 8.3"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2016-02-03"><meta name="DC.source" content="performConvoySearch.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1>Search for Convoy</h1><!--introduction--><pre>This function is to search for vehicles travelling in convoy with the target vehicle.</pre><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">I/O</a></li><li><a href="#2">Code</a></li><li><a href="#6">Linked Functions</a></li><li><a href="#7">Navigation</a></li><li><a href="#8">Author</a></li></ul></div><h2>I/O<a name="1"></a></h2><div><ul><li>INPUT:</li></ul></div><p>
+<table border=2>
+<tr><td><b>carID_cur</b></td><td>the vrm of target vehicle.</td></tr>
+<tr><td><b>camID</b></td><td>the ID of ANPR camera that capture the target vehicle.</td></tr>
+<tr><td><b>dataMap</b></td><td>this is the hash map structure store session data.</td></tr>
+<tr><td><b>threshold_delt</b></td><td>this is the threshold of search window in seconds.</td></tr>
+<tr><td><b>pairMap</b></td><td>this is the data structure to store convoy results.</td></tr>
+<tr><td><b>pos</b></td><td>this is the position of the read contains the target vehicle in the data set (intermediate data format of ANPR read).</td></tr>
+<tr><td><b>idxS</b></td><td>this is a starting position of the subset data contains all reads that have the same camera group as the target vehicle.</td></tr>
+<tr><td><b>idxE</b></td><td>this is a ending position of the subset data contains all reads that have the same camera group as the target vehicle.</td></tr>
+<tr><td><b>t0</b></td><td></td></tr>
+<tr><td><b>search_data</b></td><td>this is data set with the intermediate data format of ANPR read.</td></tr>
+<tr><td><b>time_cur</b></td><td>time stamp of target vehicle.</td></tr>
+<tr><td><b>make, model, color, tax</b></td><td>vehicle's make, model, color, and tax code.</td></tr>
+<tr><td><b>flag_mobile</b></td><td>indicates if the camera is a mobile unit or not.</td></tr>
+<tr><td><b>anprMap</b></td><td></td></tr>
+</table>
+</p><div><ul><li>OUTPUT:</li></ul></div><p>
+<table border=2>
+<tr><td><b>pairMap</b></td><td>this is the hash map structure stores all convoy search results. </td></tr>
+</table>
+</p><h2>Code<a name="2"></a></h2><pre class="codeinput"><span class="keyword">function</span> [pairMap] = performConvoySearch(carID_cur, camID, dataMap, threshold_delt, pairMap, pos, idxS, idxE, search_data, time_cur, make, model, color, tax, flag_mobile, t0, anprMap)
+</pre><pre class="codeinput">tmpMap = containers.Map(<span class="string">'KeyType'</span>,<span class="string">'char'</span>,<span class="string">'ValueType'</span>,<span class="string">'any'</span>);
+j = pos-1;
+searchUp=0;
+count_num_veh = 0;
+</pre><p>Search for previous (search window threshold) seconds for vehicles travelling together with the target vehicle</p><pre class="codeinput"><span class="keyword">while</span> searchUp == 0
+    <span class="keyword">if</span> j==idxS || j&lt;=0
+        searchDown = 0;
+        <span class="keyword">break</span>;
+    <span class="keyword">end</span>;
+    carID_nxt = search_data{j,1};
+    <span class="keyword">if</span> ~isKey(tmpMap, carID_nxt)
+        clear <span class="string">timeStamp</span>;
+        <span class="keyword">if</span> ~isempty(carID_nxt)
+            <span class="keyword">if</span> ~strcmp(carID_cur, carID_nxt)
+                time = convertTime(search_data, j);
+                camID_tmp = search_data{j,4};
+                camID_tmp(camID_tmp==<span class="string">' '</span>)=<span class="string">''</span>;
+                camID_tmp = camNameCorrection(camID_tmp);
+                <span class="keyword">if</span> isKey(dataMap,carID_nxt)
+                    <span class="keyword">if</span> abs(time_cur - time)&gt;threshold_delt
+                        searchDown = 0;
+                        <span class="keyword">break</span>;
+                    <span class="keyword">end</span>;
+                    <span class="keyword">if</span> abs(time_cur - time)&lt;threshold_delt || abs(time_cur - time)==threshold_delt
+                        <span class="keyword">if</span> strcmp(camID, camID_tmp)
+                            <span class="keyword">if</span> ~isKey(tmpMap, carID_nxt)
+                                num_vehicle = count_num_veh;
+                                [pairMap, tmpMap] = storePairs_v2(num_vehicle, carID_cur, carID_nxt, pairMap, j, camID_tmp, search_data, t0, tmpMap, time_cur,camID,make,model,color,tax);
+                                count_num_veh = count_num_veh+1;
+                            <span class="keyword">end</span>
+                        <span class="keyword">else</span>
+                            <span class="keyword">if</span> flag_mobile == 0
+                                <span class="keyword">if</span> isKey(anprMap, camID_tmp)
+                                    val = anprMap(camID_tmp);
+                                    <span class="keyword">if</span> isfield(val, <span class="string">'relatedCams'</span>)
+                                        relatedCams = val.relatedCams;
+                                        <span class="keyword">for</span> idx=1:length(relatedCams)
+                                            camID_cmp = relatedCams{idx};
+                                            <span class="keyword">if</span> strcmp(camID,camID_cmp)
+                                                <span class="keyword">if</span> ~isKey(tmpMap, carID_nxt)
+                                                    num_vehicle = count_num_veh;
+                                                    [pairMap, tmpMap] = storePairs_v2(num_vehicle, carID_cur, carID_nxt, pairMap, j, camID_tmp, search_data, t0, tmpMap, time_cur,camID,make,model,color,tax);
+                                                    count_num_veh = count_num_veh+1;
+                                                <span class="keyword">end</span>
+                                            <span class="keyword">end</span>
+                                            clear <span class="string">camID_cmp</span>;
+                                        <span class="keyword">end</span>
+                                        clear <span class="string">relatedCams</span>;
+                                    <span class="keyword">end</span>
+                                <span class="keyword">end</span>
+                            <span class="keyword">end</span>
+                        <span class="keyword">end</span>
+                    <span class="keyword">end</span>;
+                <span class="keyword">else</span>
+                    <span class="keyword">if</span> abs(time_cur - time)&gt;threshold_delt
+                        searchDown = 0;
+                        <span class="keyword">break</span>;
+                    <span class="keyword">end</span>;
+                    <span class="keyword">if</span> abs(time_cur - time)&lt;threshold_delt || abs(time_cur - time)==threshold_delt
+                        <span class="keyword">if</span> strcmp(camID, camID_tmp)
+                            count_num_veh = count_num_veh+1;
+                        <span class="keyword">else</span>
+                            <span class="keyword">if</span> flag_mobile == 0
+                                <span class="keyword">if</span> isKey(anprMap, camID_tmp)
+                                    val = anprMap(camID_tmp);
+                                    <span class="keyword">if</span> isfield(val, <span class="string">'relatedCams'</span>)
+                                        relatedCams = val.relatedCams;
+                                        <span class="keyword">for</span> idx=1:length(relatedCams)
+                                            camID_cmp = relatedCams{idx};
+                                            <span class="keyword">if</span> strcmp(camID,camID_cmp)
+                                                count_num_veh = count_num_veh+1;
+                                            <span class="keyword">end</span>
+                                            clear <span class="string">camID_cmp</span>;
+                                        <span class="keyword">end</span>
+                                        clear <span class="string">relatedCams</span>;
+                                    <span class="keyword">end</span>
+                                <span class="keyword">end</span>
+                            <span class="keyword">end</span>
+                        <span class="keyword">end</span>
+                    <span class="keyword">end</span>;
+                <span class="keyword">end</span>;
+            <span class="keyword">end</span>;
+        <span class="keyword">end</span>;
+    <span class="keyword">end</span>;
+    j = j-1;
+    clear <span class="string">carID_nxt</span>;
+<span class="keyword">end</span>;
+</pre><p>Search for following (search window threshold) seconds for vehicles travelling together with the target vehicle</p><pre class="codeinput">q = pos+1;
+count_num_veh = 0;
+<span class="keyword">while</span> searchDown == 0
+    <span class="keyword">if</span> q&gt;=idxE || q&gt;length(search_data)
+        searchDown = 1;
+        clear <span class="string">tmpMap</span>;
+        <span class="keyword">break</span>;
+    <span class="keyword">end</span>;
+    carID_nxt = search_data{q,1};
+    timeStamp = search_data{q,3};
+    <span class="keyword">if</span> ~isKey(tmpMap, carID_nxt)
+        clear <span class="string">timeStamp</span>;
+        <span class="keyword">if</span> ~isempty(carID_nxt)
+            <span class="keyword">if</span> ~strcmp(carID_cur, carID_nxt)
+                time = convertTime(search_data, q);
+                camID_tmp = search_data{q,4};
+                camID_tmp(camID_tmp==<span class="string">' '</span>)=<span class="string">''</span>;
+                camID_tmp = camNameCorrection(camID_tmp);
+                <span class="keyword">if</span> isKey(dataMap,carID_nxt)
+                    <span class="keyword">if</span> abs(time_cur - time)&gt;threshold_delt
+                        searchDown = 1;
+                        clear <span class="string">tmpMap</span>;
+                        <span class="keyword">break</span>;
+                    <span class="keyword">end</span>;
+                    <span class="keyword">if</span> abs(time_cur - time)&lt;threshold_delt || abs(time_cur - time)==threshold_delt
+                        <span class="keyword">if</span> strcmp(camID, camID_tmp)
+                            <span class="keyword">if</span> ~isKey(tmpMap, carID_nxt)
+                                num_vehicle = count_num_veh;
+                                [pairMap, tmpMap] = storePairs_v2(num_vehicle, carID_cur, carID_nxt, pairMap, q, camID_tmp, search_data, t0, tmpMap, time_cur,camID,make,model,color,tax);
+                                count_num_veh = count_num_veh+1;
+                            <span class="keyword">end</span>
+                        <span class="keyword">else</span>
+                            <span class="keyword">if</span> flag_mobile == 0
+                                <span class="keyword">if</span> isKey(anprMap, camID_tmp)
+                                    val = anprMap(camID_tmp);
+                                    <span class="keyword">if</span> isfield(val, <span class="string">'relatedCams'</span>)
+                                        relatedCams = val.relatedCams;
+                                        <span class="keyword">for</span> idx=1:length(relatedCams)
+                                            camID_cmp = relatedCams{idx};
+                                            <span class="keyword">if</span> strcmp(camID,camID_cmp)
+                                                <span class="keyword">if</span> ~isKey(tmpMap, carID_nxt)
+                                                    num_vehicle = count_num_veh;
+                                                    [pairMap, tmpMap] = storePairs_v2(num_vehicle, carID_cur, carID_nxt, pairMap, q, camID_tmp, search_data, t0, tmpMap, time_cur,camID,make,model,color,tax);
+                                                    count_num_veh = count_num_veh+1;
+                                                <span class="keyword">end</span>
+                                            <span class="keyword">end</span>
+                                            clear <span class="string">camID_cmp</span>;
+                                        <span class="keyword">end</span>
+                                        clear <span class="string">relatedCams</span>;
+                                    <span class="keyword">end</span>
+                                <span class="keyword">end</span>
+                            <span class="keyword">end</span>
+                        <span class="keyword">end</span>
+                    <span class="keyword">end</span>;
+                <span class="keyword">else</span>
+                    <span class="keyword">if</span> abs(time_cur - time)&gt;threshold_delt
+                        searchDown = 0;
+                        <span class="keyword">break</span>;
+                    <span class="keyword">end</span>;
+                    <span class="keyword">if</span> abs(time_cur - time)&lt;threshold_delt || abs(time_cur - time)==threshold_delt
+                        <span class="keyword">if</span> strcmp(camID, camID_tmp)
+                            count_num_veh = count_num_veh+1;
+                        <span class="keyword">else</span>
+                            <span class="keyword">if</span> flag_mobile == 0
+                                <span class="keyword">if</span> isKey(anprMap, camID_tmp)
+                                    val = anprMap(camID_tmp);
+                                    <span class="keyword">if</span> isfield(val, <span class="string">'relatedCams'</span>)
+                                        relatedCams = val.relatedCams;
+                                        <span class="keyword">for</span> idx=1:length(relatedCams)
+                                            camID_cmp = relatedCams{idx};
+                                            <span class="keyword">if</span> strcmp(camID,camID_cmp)
+                                                count_num_veh = count_num_veh+1;
+                                            <span class="keyword">end</span>
+                                            clear <span class="string">camID_cmp</span>;
+                                        <span class="keyword">end</span>
+                                        clear <span class="string">relatedCams</span>;
+                                    <span class="keyword">end</span>
+                                <span class="keyword">end</span>
+                            <span class="keyword">end</span>
+                        <span class="keyword">end</span>
+                    <span class="keyword">end</span>;
+                <span class="keyword">end</span>;
+            <span class="keyword">end</span>;
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>;
+    q=q+1;
+<span class="keyword">end</span>;
+</pre><h2>Linked Functions<a name="6"></a></h2><div><ul><li>See <a href="..\storePairs_v2.m">Store Vehicle Information</a></li></ul></div><h2>Navigation<a name="7"></a></h2><div><ul><li>Back to <a href="..\html\main.html">Convoy Analysis Tool</a></li><li>Go to <a href="http://www.surrey.ac.uk/cs/research/msf/projects/polarbear_pattern_of_life_anpr_behaviour_extraction_analysis_and_recognition.htm">Project page</a></li></ul></div><h2>Author<a name="8"></a></h2><pre>Haiyue Yuan, 01.2016, Depatment of Computer Science, University of Surrey</pre><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2014a</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% Search for Convoy
+%  This function is to search for vehicles travelling in convoy with the target vehicle.
+
+%%
+%% I/O
+% * INPUT:
+%
+% <html>
+% <table border=2>
+% <tr><td><b>carID_cur</b></td><td>the vrm of target vehicle.</td></tr>
+% <tr><td><b>camID</b></td><td>the ID of ANPR camera that capture the target vehicle.</td></tr>
+% <tr><td><b>dataMap</b></td><td>this is the hash map structure store session data.</td></tr>
+% <tr><td><b>threshold_delt</b></td><td>this is the threshold of search window in seconds.</td></tr>
+% <tr><td><b>pairMap</b></td><td>this is the data structure to store convoy results.</td></tr>
+% <tr><td><b>pos</b></td><td>this is the position of the read contains the target vehicle in the data set (intermediate data format of ANPR read).</td></tr>
+% <tr><td><b>idxS</b></td><td>this is a starting position of the subset data contains all reads that have the same camera group as the target vehicle.</td></tr>
+% <tr><td><b>idxE</b></td><td>this is a ending position of the subset data contains all reads that have the same camera group as the target vehicle.</td></tr>
+% <tr><td><b>t0</b></td><td></td></tr>
+% <tr><td><b>search_data</b></td><td>this is data set with the intermediate data format of ANPR read.</td></tr>
+% <tr><td><b>time_cur</b></td><td>time stamp of target vehicle.</td></tr>
+% <tr><td><b>make, model, color, tax</b></td><td>vehicle's make, model, color, and tax code.</td></tr>
+% <tr><td><b>flag_mobile</b></td><td>indicates if the camera is a mobile unit or not.</td></tr>
+% <tr><td><b>anprMap</b></td><td></td></tr>
+% </table>
+% </html>
+%
+% * OUTPUT:
+%
+% <html>
+% <table border=2>
+% <tr><td><b>pairMap</b></td><td>this is the hash map structure stores all convoy search results. </td></tr>
+% </table>
+% </html>
+%
+%% Code
+function [pairMap] = performConvoySearch(carID_cur, camID, dataMap, threshold_delt, pairMap, pos, idxS, idxE, search_data, time_cur, make, model, color, tax, flag_mobile, t0, anprMap)
+tmpMap = containers.Map('KeyType','char','ValueType','any');
+j = pos-1;
+searchUp=0;
+count_num_veh = 0;
+%%
+% Search for previous (search window threshold) seconds for vehicles
+% travelling together with the target vehicle
+while searchUp == 0
+    if j==idxS || j<=0
+        searchDown = 0;
+        break;
+    end;
+    carID_nxt = search_data{j,1};
+    if ~isKey(tmpMap, carID_nxt)
+        clear timeStamp;
+        if ~isempty(carID_nxt) 
+            if ~strcmp(carID_cur, carID_nxt)
+                time = convertTime(search_data, j);
+                camID_tmp = search_data{j,4};
+                camID_tmp(camID_tmp==' ')='';
+                camID_tmp = camNameCorrection(camID_tmp);
+                if isKey(dataMap,carID_nxt)
+                    if abs(time_cur - time)>threshold_delt
+                        searchDown = 0;
+                        break;
+                    end;
+                    if abs(time_cur - time)<threshold_delt || abs(time_cur - time)==threshold_delt
+                        if strcmp(camID, camID_tmp)
+                            if ~isKey(tmpMap, carID_nxt)
+                                num_vehicle = count_num_veh;
+                                [pairMap, tmpMap] = storePairs_v2(num_vehicle, carID_cur, carID_nxt, pairMap, j, camID_tmp, search_data, t0, tmpMap, time_cur,camID,make,model,color,tax);                                                                
+                                count_num_veh = count_num_veh+1;
+                            end
+                        else
+                            if flag_mobile == 0
+                                if isKey(anprMap, camID_tmp)
+                                    val = anprMap(camID_tmp);
+                                    if isfield(val, 'relatedCams')
+                                        relatedCams = val.relatedCams;
+                                        for idx=1:length(relatedCams)
+                                            camID_cmp = relatedCams{idx};
+                                            if strcmp(camID,camID_cmp)
+                                                if ~isKey(tmpMap, carID_nxt)
+                                                    num_vehicle = count_num_veh;
+                                                    [pairMap, tmpMap] = storePairs_v2(num_vehicle, carID_cur, carID_nxt, pairMap, j, camID_tmp, search_data, t0, tmpMap, time_cur,camID,make,model,color,tax);
+                                                    count_num_veh = count_num_veh+1;
+                                                end
+                                            end
+                                            clear camID_cmp;
+                                        end
+                                        clear relatedCams;
+                                    end
+                                end
+                            end
+                        end
+                    end;
+                else
+                    if abs(time_cur - time)>threshold_delt
+                        searchDown = 0;
+                        break;
+                    end;
+                    if abs(time_cur - time)<threshold_delt || abs(time_cur - time)==threshold_delt
+                        if strcmp(camID, camID_tmp)
+                            count_num_veh = count_num_veh+1;
+                        else
+                            if flag_mobile == 0
+                                if isKey(anprMap, camID_tmp)
+                                    val = anprMap(camID_tmp);
+                                    if isfield(val, 'relatedCams')
+                                        relatedCams = val.relatedCams;
+                                        for idx=1:length(relatedCams)
+                                            camID_cmp = relatedCams{idx};
+                                            if strcmp(camID,camID_cmp)
+                                                count_num_veh = count_num_veh+1;
+                                            end
+                                            clear camID_cmp;
+                                        end
+                                        clear relatedCams;
+                                    end
+                                end
+                            end
+                        end
+                    end;
+                end;
+            end;
+        end;
+    end;
+    j = j-1;
+    clear carID_nxt;
+end;
+%%
+% Search for following (search window threshold) seconds for vehicles
+% travelling together with the target vehicle
+q = pos+1;
+count_num_veh = 0;
+while searchDown == 0
+    if q>=idxE || q>length(search_data)
+        searchDown = 1;
+        clear tmpMap;
+        break;
+    end;
+    carID_nxt = search_data{q,1};
+    timeStamp = search_data{q,3};
+    if ~isKey(tmpMap, carID_nxt)
+        clear timeStamp;
+        if ~isempty(carID_nxt) 
+            if ~strcmp(carID_cur, carID_nxt)
+                time = convertTime(search_data, q);
+                camID_tmp = search_data{q,4};
+                camID_tmp(camID_tmp==' ')='';
+                camID_tmp = camNameCorrection(camID_tmp);
+                if isKey(dataMap,carID_nxt)
+                    if abs(time_cur - time)>threshold_delt
+                        searchDown = 1;
+                        clear tmpMap;
+                        break;
+                    end;
+                    if abs(time_cur - time)<threshold_delt || abs(time_cur - time)==threshold_delt
+                        if strcmp(camID, camID_tmp)
+                            if ~isKey(tmpMap, carID_nxt)
+                                num_vehicle = count_num_veh;
+                                [pairMap, tmpMap] = storePairs_v2(num_vehicle, carID_cur, carID_nxt, pairMap, q, camID_tmp, search_data, t0, tmpMap, time_cur,camID,make,model,color,tax);
+                                count_num_veh = count_num_veh+1;
+                            end
+                        else
+                            if flag_mobile == 0
+                                if isKey(anprMap, camID_tmp)
+                                    val = anprMap(camID_tmp);
+                                    if isfield(val, 'relatedCams')
+                                        relatedCams = val.relatedCams;
+                                        for idx=1:length(relatedCams)
+                                            camID_cmp = relatedCams{idx};
+                                            if strcmp(camID,camID_cmp)
+                                                if ~isKey(tmpMap, carID_nxt)
+                                                    num_vehicle = count_num_veh;
+                                                    [pairMap, tmpMap] = storePairs_v2(num_vehicle, carID_cur, carID_nxt, pairMap, q, camID_tmp, search_data, t0, tmpMap, time_cur,camID,make,model,color,tax);
+                                                    count_num_veh = count_num_veh+1;
+                                                end
+                                            end
+                                            clear camID_cmp;
+                                        end
+                                        clear relatedCams;
+                                    end
+                                end
+                            end
+                        end
+                    end;
+                else
+                    if abs(time_cur - time)>threshold_delt
+                        searchDown = 0;
+                        break;
+                    end;
+                    if abs(time_cur - time)<threshold_delt || abs(time_cur - time)==threshold_delt
+                        if strcmp(camID, camID_tmp)
+                            count_num_veh = count_num_veh+1;
+                        else
+                            if flag_mobile == 0
+                                if isKey(anprMap, camID_tmp)
+                                    val = anprMap(camID_tmp);
+                                    if isfield(val, 'relatedCams')
+                                        relatedCams = val.relatedCams;
+                                        for idx=1:length(relatedCams)
+                                            camID_cmp = relatedCams{idx};
+                                            if strcmp(camID,camID_cmp)
+                                                count_num_veh = count_num_veh+1;
+                                            end
+                                            clear camID_cmp;
+                                        end
+                                        clear relatedCams;
+                                    end
+                                end
+                            end
+                        end
+                    end;
+                end;
+            end;
+        end
+    end;
+    q=q+1;
+end;
+
+
+%% Linked Functions
+% * See
+% <..\storePairs_v2.m Store Vehicle Information> 
+
+%% Navigation
+% * Back to 
+% <..\html\main.html Convoy Analysis Tool>
+% * Go to
+% <http://www.surrey.ac.uk/cs/research/msf/projects/polarbear_pattern_of_life_anpr_behaviour_extraction_analysis_and_recognition.htm Project page> 
+
+
+%% Author
+%  Haiyue Yuan, 01.2016, Depatment of Computer Science, University of Surrey
+%%
+
+##### SOURCE END #####
+--></body></html>

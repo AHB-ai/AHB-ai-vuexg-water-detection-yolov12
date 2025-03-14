@@ -1,0 +1,198 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Journey Extraction</title><meta name="generator" content="MATLAB 8.3"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2016-02-03"><meta name="DC.source" content="singleJourney.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1>Journey Extraction</h1><!--introduction--><pre>This script is to scan all reads and save journey data of one single vehicle per day.</pre><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">I/O</a></li><li><a href="#2">Code</a></li><li><a href="#4">Navigation</a></li><li><a href="#5">Author</a></li></ul></div><h2>I/O<a name="1"></a></h2><div><ul><li>INPUT:</li></ul></div><p>
+<table border=2>
+<tr><td><b>input_data</b></td><td>ANPR reads in an intermediate format.</td></tr>
+<tr><td><b>output_dir</b></td><td>path to store journey data.</td></tr>
+</table>
+</p><div><ul><li>OUTPUT:</li></ul></div><p>
+<table border=2>
+<tr><td><b>journeyMap</b></td><td>the journey is stored in a hash map sturcture, with key of a single vehicle's vrm. </td></tr>
+</table>
+</p><h2>Code<a name="2"></a></h2><pre class="codeinput"><span class="keyword">function</span> [journeyMap] = singleJourney(input_data, journeyFile, output_dir)
+</pre><pre class="codeinput"><span class="keyword">if</span> ~exist(journeyFile, <span class="string">'file'</span>)
+    t0 = 734139;
+    <span class="keyword">if</span> ~exist(output_dir, <span class="string">'file'</span>)
+        mkdir(output_dir);
+    <span class="keyword">end</span>
+    data = input_data.data;
+    date_string = data{1,2};
+    dateNum = datenum(date_string, <span class="string">'dd-mm-yyyy'</span>)-t0;
+    journeyMap = containers.Map(<span class="string">'KeyType'</span>,<span class="string">'char'</span>,<span class="string">'ValueType'</span>,<span class="string">'any'</span>);
+    <span class="keyword">for</span> j=1:length(data)
+        carID = data{j,1};
+        <span class="keyword">if</span> ~isempty(carID)
+            sectmp = str2num(strrep(data{j,3},<span class="string">':'</span>, <span class="string">' '</span>));
+            timeNum =  dateNum*24*3600+sectmp(1)*3600+sectmp(2)*60+sectmp(3);
+            camID = data{j,4};
+            dataInfo.time = timeNum;
+            dataInfo.camID = camID;
+            dataInfo.pos = j;
+            <span class="keyword">if</span> ~isKey(journeyMap, carID);
+                dataList{1} = dataInfo;
+                journeyMap(carID) = dataList;
+                clear <span class="string">dataInfo</span>;
+                clear <span class="string">dataList</span>;
+            <span class="keyword">else</span>
+                dataList_tmp = journeyMap(carID);
+                length_tmp = length(dataList_tmp);
+                <span class="keyword">if</span> (dataList_tmp{length_tmp}.time~=dataInfo.time)
+                    dataList_tmp{length_tmp+1} = dataInfo;
+                <span class="keyword">end</span>
+                dataList_tmp = sortJourney(dataList_tmp);
+                journeyMap(carID) = dataList_tmp;
+                clear <span class="string">dataInfo</span>;
+                clear <span class="string">dataList</span>;
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+    save([output_dir <span class="string">'\'</span> date_string <span class="string">'_journey.mat'</span>],<span class="string">'journeyMap'</span>);
+<span class="keyword">else</span>
+    load(journeyFile)
+<span class="keyword">end</span>
+</pre><h2>Navigation<a name="4"></a></h2><div><ul><li>Back to <a href="..\html\main.html">Convoy Analysis Tool</a></li><li>Go to <a href="http://www.surrey.ac.uk/cs/research/msf/projects/polarbear_pattern_of_life_anpr_behaviour_extraction_analysis_and_recognition.htm">Project page</a></li></ul></div><h2>Author<a name="5"></a></h2><pre>Haiyue Yuan, 01.2016, Depatment of Computer Science, University of Surrey</pre><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2014a</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% Journey Extraction
+%  This script is to scan all reads and save journey data of one single vehicle per day.
+
+%%
+%% I/O
+% * INPUT:
+%
+% <html>
+% <table border=2>
+% <tr><td><b>input_data</b></td><td>ANPR reads in an intermediate format.</td></tr>
+% <tr><td><b>output_dir</b></td><td>path to store journey data.</td></tr>
+% </table>
+% </html>
+%
+% * OUTPUT:
+%
+% <html>
+% <table border=2>
+% <tr><td><b>journeyMap</b></td><td>the journey is stored in a hash map sturcture, with key of a single vehicle's vrm. </td></tr>
+% </table>
+% </html>
+%
+%% Code
+
+function [journeyMap] = singleJourney(input_data, journeyFile, output_dir)
+if ~exist(journeyFile, 'file')
+    t0 = 734139;
+    if ~exist(output_dir, 'file')
+        mkdir(output_dir);
+    end
+    data = input_data.data;
+    date_string = data{1,2};
+    dateNum = datenum(date_string, 'dd-mm-yyyy')-t0;
+    journeyMap = containers.Map('KeyType','char','ValueType','any');
+    for j=1:length(data)
+        carID = data{j,1};
+        if ~isempty(carID)
+            sectmp = str2num(strrep(data{j,3},':', ' '));
+            timeNum =  dateNum*24*3600+sectmp(1)*3600+sectmp(2)*60+sectmp(3);
+            camID = data{j,4};
+            dataInfo.time = timeNum;
+            dataInfo.camID = camID;
+            dataInfo.pos = j;
+            if ~isKey(journeyMap, carID);
+                dataList{1} = dataInfo;
+                journeyMap(carID) = dataList;
+                clear dataInfo;
+                clear dataList;
+            else
+                dataList_tmp = journeyMap(carID);
+                length_tmp = length(dataList_tmp);
+                if (dataList_tmp{length_tmp}.time~=dataInfo.time)
+                    dataList_tmp{length_tmp+1} = dataInfo;
+                end
+                dataList_tmp = sortJourney(dataList_tmp);
+                journeyMap(carID) = dataList_tmp;
+                clear dataInfo;
+                clear dataList;
+            end
+        end
+    end
+    save([output_dir '\' date_string '_journey.mat'],'journeyMap');
+else
+    load(journeyFile)
+end
+
+%% Navigation
+% * Back to
+% <..\html\main.html Convoy Analysis Tool>
+% * Go to
+% <http://www.surrey.ac.uk/cs/research/msf/projects/polarbear_pattern_of_life_anpr_behaviour_extraction_analysis_and_recognition.htm Project page>
+
+
+%% Author
+%  Haiyue Yuan, 01.2016, Depatment of Computer Science, University of Surrey
+%%
+##### SOURCE END #####
+--></body></html>
