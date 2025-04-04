@@ -1,8 +1,0 @@
-travelInfoBetweenCams.csv records travel time and travel distance between cameras.
-The data is obtained using Google Map API.
-For each pair of cameras, there might be more that one pair of data, as it also records alternative routes (shortest, fastest and etc)
-The first column is the camera names.
-The second column is the distance between cameras.
-The third column is the travel time (without traffic) between cameras.
-
-trafficMapBetweenCams.mat is a matlab data that stores above information but in a hashmap format.
