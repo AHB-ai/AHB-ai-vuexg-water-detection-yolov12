@@ -24,15 +24,16 @@ Developed by [AHB.ai](https://www.ahb.ai).
 streamlit/
 ├── app.py                # Main Streamlit application
 ├── assets/
-│   └── logo.png          # Application logo (replace with your own)
+│   └── VueXG_Icon.png    # Application logo (replace with your own)
+│   └── VueXG_Typography.png  
 ├── models/               # Directory for models
-│   └── best.pt           # Default custom model path
+│   └── water_leak.pt     # Default custom model path
 ├── examples/             # Directory for example images
-│   ├── example1.jpg
-│   └── example2.jpg
+│   ├── sample_day.jpg
+│   └── sample_night.jpg
 ├── output_videos/        # Default server-side save location (if enabled)
 ├── requirements.txt      # Python dependencies
-└── README.md             # This documentation file
+└── README.md             # This is documentation file
 ```
 
 ## Requirements
