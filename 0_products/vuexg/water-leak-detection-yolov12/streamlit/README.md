@@ -52,18 +52,24 @@ streamlit/
    git clone https://github.com/AHB-ai/AHB-ai-vuexg-water-detection-yolov12.git
    cd your_project_directory
    ```
-2. **Install Dependencies**
+
+2. **Create Conda Environement**
+   ```bash
+   conda create -n water-leak-detection python=3.11
+   conda activate water-leak-detection
+   ```
+3. **Install Dependencies**
    ```bash
    pip install -r requirements.txt
    ```
-3. **Place Assets**
-   - Put your logo file named `logo.png` inside the `assets/` directory.  
-   - Place your custom YOLO model (e.g., `best.pt`) inside the `models/` directory.  
+4. **Place Assets**
+   - Put your logo file named `VueXG_Typography.png` inside the `assets/` directory.  
+   - Place your custom YOLO model (e.g., `water_leak.pt`) inside the `models/` directory.  
      - If your model name or location differs, update the `DEFAULT_CUSTOM_MODEL_PATH` constant in `app.py`.  
    - Place your example images (e.g., `example1.jpg`, `example2.jpg`) inside the `examples/` directory.  
      - Update the `EXAMPLE_IMAGES` dictionary in `app.py` if your filenames differ.
 
-4. **Download Standard YOLO Models (If Needed)**
+5. **Download Standard YOLO Models (If Needed)**
    - The `ultralytics` library will automatically download the standard YOLOv12 models (e.g., `yolov12n.pt`, `yolov12s.pt`, etc.) the first time they are selected, provided you have an internet connection.
 
 ## How to Run
@@ -103,7 +109,7 @@ streamlit/
 ## Notes
 
 - Video processing can be computationally intensive, especially for long videos or larger models.  
-- Ensure the model file (`best.pt` or your custom file) and example images are correctly placed in their respective directories (`models/`, `examples/`). Otherwise, update the paths in `app.py`.  
+- Ensure the model file (`water_leak.pt` or your custom file) and example images are correctly placed in their respective directories (`models/`, `examples/`). Otherwise, update the paths in `app.py`.  
 - Temporary files are created during video processing. The temporary *input* video is deleted automatically after processing. The temporary *processed* video is kept until you download it or start a new video processing task (depending on Streamlit’s session behavior).
 
 ---
